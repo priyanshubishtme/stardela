@@ -30,7 +30,10 @@ describe("routes", () => {
 
     render(<RouterProvider router={router} />);
 
-    const notFoundHeading = await screen.findByRole("heading", { name: "Page Not Found", level: 1 });
+    const notFoundHeading = await screen.findByRole("heading", {
+      name: "Page Not Found",
+      level: 1,
+    });
     expect(notFoundHeading).toBeDefined();
   });
 });

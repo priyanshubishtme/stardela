@@ -4,9 +4,8 @@ import { describe, expect, it, vi } from "vitest";
 import { RouteError } from "./RouteError";
 import { text } from "../text/en";
 
-function BrokenPage() {
+function BrokenPage(): never {
   throw new Error("Test error message");
-  return <></>;
 }
 
 describe("RouteError", () => {
@@ -34,7 +33,7 @@ describe("RouteError", () => {
     await waitFor(() => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         "React Router caught the following error during render",
-        expect.any(Error)
+        expect.any(Error),
       );
     });
 
