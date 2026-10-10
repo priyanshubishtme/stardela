@@ -7,7 +7,7 @@ export function NotFoundPage() {
       <div className={styles.errorCode}>404</div>
       <h1 className={styles.title}>Page Not Found</h1>
       <p className={styles.description}>
-        The puzzle you're looking for seems to have gone missing. It might have been solved, moved,
+        The puzzle you&apos;re looking for seems to have gone missing. It might have been solved, moved,
         or never existed at all.
       </p>
       <Link to="/" className={styles.homeLink}>
