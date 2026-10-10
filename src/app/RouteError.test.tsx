@@ -30,9 +30,12 @@ describe("RouteError", () => {
     screen.getByText(text.routeError.body);
     screen.getByRole("link", { name: text.routeError.homeLink });
 
-    // Verify that the error was logged
+    // Verify that the error was logged by React Router
     await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "React Router caught the following error during render",
+        expect.any(Error)
+      );
     });
 
     consoleErrorSpy.mockRestore();
