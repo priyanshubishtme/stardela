@@ -18,6 +18,16 @@ export const routes: RouteObject[] = [
         hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,
       },
       {
+        path: "color-binary",
+        element: <PuzzlePage />,
+        hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,
+      },
+      {
+        path: "colour-binary",
+        element: <PuzzlePage />,
+        hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,
+      },
+      {
         path: "puzzles/:puzzleId",
         element: <PuzzlePage />,
         hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,

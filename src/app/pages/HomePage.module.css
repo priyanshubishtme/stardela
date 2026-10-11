@@ -74,3 +74,30 @@
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border);
 }
+
+.difficultyList {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.difficultyBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.85rem;
+  background-color: var(--accent);
+  color: var(--on-accent);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 150ms ease,
+    transform 150ms ease;
+}
+
+.difficultyBtn:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
