@@ -20,9 +20,39 @@ export interface DailyPuzzleSet {
   };
 }
 
+export interface PuzzleAppInfo {
+  id: string;
+  name: string;
+  summary: string;
+  isAvailable: boolean;
+}
+
+export const puzzleApps: PuzzleAppInfo[] = [
+  {
+    id: "colour-binary",
+    name: "Colour Binary",
+    summary: "Make each square red or blue. Each line has half of each colour.",
+    isAvailable: true,
+  },
+  {
+    id: "guzzle",
+    name: "Guzzle",
+    summary:
+      "Find four words that cross at one letter. The colors tell you where each letter goes.",
+    isAvailable: false,
+  },
+  {
+    id: "lanterns",
+    name: "Lanterns",
+    summary: "Lit lanterns tell the truth, dark lanterns lie.",
+    isAvailable: false,
+  },
+];
+
 export interface HomeLoaderData {
   dayNumber: number;
   dailyPuzzles: DailyPuzzleSet;
+  puzzleApps: PuzzleAppInfo[];
 }
 
 export function getDayNumber(date: Date = new Date()): number {
@@ -104,5 +134,6 @@ export function homeLoader(): HomeLoaderData {
   return {
     dayNumber: dailyPuzzles.dayNumber,
     dailyPuzzles,
+    puzzleApps,
   };
 }

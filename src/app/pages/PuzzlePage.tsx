@@ -43,9 +43,26 @@ function RulesCard() {
   );
 }
 
+interface HintControlProps {
+  onHint: () => void;
+  message: string | null;
+}
+
+function HintControl({ onHint, message }: HintControlProps) {
+  return (
+    <>
+      <button type="button" className={styles.hintBtn} onClick={onHint}>
+        {words.hintButton}
+      </button>
+      {message && <p className={styles.hintMessage}>{message}</p>}
+    </>
+  );
+}
+
 function ColorBinaryGame({ puzzle }: { puzzle: ColorBinaryPuzzle }) {
   const [squares, setSquares] = useState<Square[]>(() => toSquares(puzzle.start));
   const [hintMessage, setHintMessage] = useState<string | null>(null);
+  const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
 
   const handleSquareClick = (index: number) => {
     const startSquares = toSquares(puzzle.start);
@@ -58,11 +75,19 @@ function ColorBinaryGame({ puzzle }: { puzzle: ColorBinaryPuzzle }) {
       return next;
     });
     setHintMessage(null);
+    setHighlightIndex(null);
   };
 
   const handleHint = () => {
     const found = findHint(squares);
-    setHintMessage(found ? words.hint(found) : words.noHint);
+    if (found) {
+      const size = Math.sqrt(squares.length);
+      setHintMessage(words.hint(found));
+      setHighlightIndex((found.row - 1) * size + (found.column - 1));
+    } else {
+      setHintMessage(words.noHint);
+      setHighlightIndex(null);
+    }
   };
 
   return (
@@ -70,11 +95,13 @@ function ColorBinaryGame({ puzzle }: { puzzle: ColorBinaryPuzzle }) {
       <RulesCard />
 
       <section className={styles.boardArea} aria-label={words.boardLabel}>
-        <Board puzzle={puzzle} squares={squares} onSquareClick={handleSquareClick} />
-        <button type="button" className={styles.hintBtn} onClick={handleHint}>
-          {words.hintButton}
-        </button>
-        {hintMessage && <p className={styles.hintMessage}>{hintMessage}</p>}
+        <Board
+          puzzle={puzzle}
+          squares={squares}
+          highlightIndex={highlightIndex}
+          onSquareClick={handleSquareClick}
+        />
+        <HintControl onHint={handleHint} message={hintMessage} />
         <RuleCheck squares={squares} />
       </section>
     </div>

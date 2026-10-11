@@ -28,21 +28,17 @@ describe("Board component", () => {
 
   it("cycles an empty square on click through red, blue, and empty", () => {
     render(<Board puzzle={samplePuzzle} />);
-    // Square 1,2 is at index 1 and starts empty
     const buttons = screen.getAllByRole("button");
     const emptyCell = buttons[1]!;
 
     expect(emptyCell.textContent).toBe("");
 
-    // Click 1: turns Red
     fireEvent.click(emptyCell);
     expect(emptyCell.textContent).toBe(words.symbols.R);
 
-    // Click 2: turns Blue
     fireEvent.click(emptyCell);
     expect(emptyCell.textContent).toBe(words.symbols.B);
 
-    // Click 3: turns Empty
     fireEvent.click(emptyCell);
     expect(emptyCell.textContent).toBe("");
   });
@@ -50,11 +46,19 @@ describe("Board component", () => {
   it("does not change a fixed square when clicked", () => {
     render(<Board puzzle={samplePuzzle} />);
     const buttons = screen.getAllByRole("button");
-    // Starts with "R"
     const fixedCell = buttons[0]!;
 
     expect(fixedCell.textContent).toBe(words.symbols.R);
     fireEvent.click(fixedCell);
     expect(fixedCell.textContent).toBe(words.symbols.R);
+  });
+});
+
+describe("Board component - highlights", () => {
+  it("renders a highlighted square when highlightIndex is provided", () => {
+    render(<Board puzzle={samplePuzzle} highlightIndex={2} />);
+    const buttons = screen.getAllByRole("button");
+    const highlightedCell = buttons[2]!;
+    expect(highlightedCell.className).toContain("squareHighlighted");
   });
 });

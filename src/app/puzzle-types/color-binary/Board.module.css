@@ -69,6 +69,30 @@
   border-color: var(--border);
 }
 
+.squareHighlighted {
+  border-color: #f59e0b !important;
+  box-shadow:
+    0 0 0 3px rgba(245, 158, 11, 0.45),
+    0 0 12px rgba(245, 158, 11, 0.3);
+  position: relative;
+  z-index: 2;
+  animation: pulseHighlight 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseHighlight {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px rgba(245, 158, 11, 0.45),
+      0 0 10px rgba(245, 158, 11, 0.25);
+  }
+  50% {
+    box-shadow:
+      0 0 0 5px rgba(245, 158, 11, 0.7),
+      0 0 16px rgba(245, 158, 11, 0.5);
+  }
+}
+
 .status {
   text-align: center;
   font-size: 1rem;

@@ -10,6 +10,7 @@ type GridStyle = CSSProperties & { "--size": number };
 export interface BoardProps {
   puzzle: ColorBinaryPuzzle;
   squares?: readonly Square[];
+  highlightIndex?: number | null;
   onSquareClick?: (index: number) => void;
 }
 
@@ -24,10 +25,11 @@ interface SquareButtonProps {
   index: number;
   size: number;
   isFixed: boolean;
+  isHighlighted?: boolean;
   onClick: () => void;
 }
 
-function SquareButton({ square, index, size, isFixed, onClick }: SquareButtonProps) {
+function SquareButton({ square, index, size, isFixed, isHighlighted, onClick }: SquareButtonProps) {
   const row = Math.floor(index / size) + 1;
   const col = (index % size) + 1;
 
@@ -39,6 +41,7 @@ function SquareButton({ square, index, size, isFixed, onClick }: SquareButtonPro
     styles.square,
     square === "R" ? styles.squareRed : square === "B" ? styles.squareBlue : styles.squareEmpty,
     isFixed ? styles.squareFixed : "",
+    isHighlighted ? styles.squareHighlighted : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -60,27 +63,30 @@ interface BoardGridProps {
   squares: readonly Square[];
   startSquares: readonly Square[];
   size: number;
+  highlightIndex?: number | null;
   onSquareClick: (index: number) => void;
 }
 
-function BoardGrid({ squares, startSquares, size, onSquareClick }: BoardGridProps) {
+function BoardGrid({ squares, startSquares, size, highlightIndex, onSquareClick }: BoardGridProps) {
   const gridStyle: GridStyle = { "--size": size };
   const cells = squares.map((square, index) => ({
     coordId: `pos-${Math.floor(index / size)}-${index % size}`,
     square,
     index,
     isFixed: startSquares[index] !== ".",
+    isHighlighted: highlightIndex === index,
   }));
 
   return (
     <div className={styles.board} aria-label={words.boardLabel} style={gridStyle}>
-      {cells.map(({ coordId, square, index, isFixed }) => (
+      {cells.map(({ coordId, square, index, isFixed, isHighlighted }) => (
         <SquareButton
           key={coordId}
           square={square}
           index={index}
           size={size}
           isFixed={isFixed}
+          isHighlighted={isHighlighted}
           onClick={() => onSquareClick(index)}
         />
       ))}
@@ -88,7 +94,12 @@ function BoardGrid({ squares, startSquares, size, onSquareClick }: BoardGridProp
   );
 }
 
-export function Board({ puzzle, squares: externalSquares, onSquareClick }: BoardProps) {
+export function Board({
+  puzzle,
+  squares: externalSquares,
+  highlightIndex,
+  onSquareClick,
+}: BoardProps) {
   const [internalSquares, setInternalSquares] = useState<Square[]>(() => toSquares(puzzle.start));
   const squares = externalSquares ?? internalSquares;
   const startSquares = toSquares(puzzle.start);
@@ -115,6 +126,7 @@ export function Board({ puzzle, squares: externalSquares, onSquareClick }: Board
         squares={squares}
         startSquares={startSquares}
         size={size}
+        highlightIndex={highlightIndex}
         onSquareClick={handleClick}
       />
       <p className={`${styles.status} ${isSolved ? styles.solved : ""}`}>

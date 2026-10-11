@@ -6,6 +6,7 @@ import {
   getOrGenerateDailyPuzzles,
   getRandomPuzzle,
   getStoredDailyPuzzles,
+  homeLoader,
   saveDailyPuzzles,
 } from "./daily";
 
@@ -61,5 +62,14 @@ describe("daily - storage and generation", () => {
     localStorage.setItem(DAILY_STORAGE_KEY, "invalid-json");
     const fresh = getOrGenerateDailyPuzzles();
     expect(fresh.puzzles.easy).toBeDefined();
+  });
+});
+
+describe("daily - homeLoader", () => {
+  it("returns dayNumber, dailyPuzzles, and puzzleApps", () => {
+    const data = homeLoader();
+    expect(data.dayNumber).toBeGreaterThan(0);
+    expect(data.dailyPuzzles).toBeDefined();
+    expect(data.puzzleApps).toHaveLength(3);
   });
 });

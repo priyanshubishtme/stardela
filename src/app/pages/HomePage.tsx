@@ -1,9 +1,16 @@
 import { Link, useLoaderData } from "react-router";
+import type { Difficulty } from "../../shared/difficulty";
 import { text } from "../../text/en";
 import { homeLoader, type DailyPuzzleSet, type HomeLoaderData } from "../daily";
 import styles from "./HomePage.module.css";
 
 const colorBinary = text["color-binary"];
+
+const levels: { key: Difficulty; label: string }[] = [
+  { key: "easy", label: "Easy" },
+  { key: "medium", label: "Medium" },
+  { key: "hard", label: "Hard" },
+];
 
 function ColourBinaryCard({ dailyPuzzles }: { dailyPuzzles: DailyPuzzleSet }) {
   return (
@@ -11,15 +18,15 @@ function ColourBinaryCard({ dailyPuzzles }: { dailyPuzzles: DailyPuzzleSet }) {
       <h3 className={styles.puzzleName}>{colorBinary.name}</h3>
       <p className={styles.puzzleSummary}>{colorBinary.summary}</p>
       <div className={styles.difficultyList}>
-        <Link to={`/puzzles/${dailyPuzzles.puzzles.easy}`} className={styles.difficultyBtn}>
-          Easy
-        </Link>
-        <Link to={`/puzzles/${dailyPuzzles.puzzles.medium}`} className={styles.difficultyBtn}>
-          Medium
-        </Link>
-        <Link to={`/puzzles/${dailyPuzzles.puzzles.hard}`} className={styles.difficultyBtn}>
-          Hard
-        </Link>
+        {levels.map(({ key, label }) => (
+          <Link
+            key={key}
+            to={`/puzzles/${dailyPuzzles.puzzles[key]}`}
+            className={styles.difficultyBtn}
+          >
+            {label}
+          </Link>
+        ))}
       </div>
     </div>
   );
@@ -51,15 +58,13 @@ export function HomePage() {
         <h2 className={styles.puzzleHeading}>Puzzle types</h2>
 
         <div className={styles.puzzleGrid}>
-          <ColourBinaryCard dailyPuzzles={data.dailyPuzzles} />
-          <ComingSoonCard
-            title="Guzzle"
-            summary="Find four words that cross at one letter. The colors tell you where each letter goes."
-          />
-          <ComingSoonCard
-            title="Lanterns"
-            summary="Lit lanterns tell the truth, dark lanterns lie."
-          />
+          {data.puzzleApps.map((app) =>
+            app.isAvailable ? (
+              <ColourBinaryCard key={app.id} dailyPuzzles={data.dailyPuzzles} />
+            ) : (
+              <ComingSoonCard key={app.id} title={app.name} summary={app.summary} />
+            ),
+          )}
         </div>
       </section>
     </div>
