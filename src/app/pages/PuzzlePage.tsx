@@ -16,10 +16,7 @@ import {
   type ColorBinaryPuzzle,
 } from "../puzzle-types/color-binary/puzzles";
 import GuzzleSession from "../puzzle-types/guzzle/GuzzleSession";
-import {
-  findGuzzlePuzzle,
-  type GuzzlePuzzle,
-} from "../puzzle-types/guzzle/puzzles";
+import { findGuzzlePuzzle, type GuzzlePuzzle } from "../puzzle-types/guzzle/puzzles";
 import styles from "./PuzzlePage.module.css";
 
 const words = text["color-binary"];
@@ -169,6 +166,93 @@ function FallbackPuzzle({ puzzleId }: { puzzleId?: string }) {
 }
 
 /**
+ * Guzzle puzzle view with header and session.
+ */
+function GuzzlePuzzleView({
+  puzzle,
+  dayNumber,
+  isDaily,
+}: {
+  puzzle: GuzzlePuzzle;
+  dayNumber?: number;
+  isDaily?: boolean;
+}) {
+  return (
+    <div className={styles.container}>
+      <title>{text.puzzlePage.title(text.guzzle.name)}</title>
+      <span className="visually-hidden">Puzzle Page</span>
+      <GuzzlePuzzleHeader puzzle={puzzle} dayNumber={dayNumber} isDaily={isDaily} />
+      <Suspense fallback={<PuzzleLoading size={puzzle.size} />}>
+        <GuzzleSession key={puzzle.id} puzzle={puzzle} />
+      </Suspense>
+    </div>
+  );
+}
+
+/**
+ * Color Binary puzzle view with header and session.
+ */
+function ColorBinaryPuzzleView({
+  puzzle,
+  dayNumber,
+  isDaily,
+  dailyPuzzles,
+}: {
+  puzzle: ColorBinaryPuzzle;
+  dayNumber?: number;
+  isDaily?: boolean;
+  dailyPuzzles?: { easy: string; medium: string; hard: string };
+}) {
+  const size = sizes[puzzle.difficulty];
+  return (
+    <div className={styles.container}>
+      <title>{text.puzzlePage.title(words.name)}</title>
+      <span className="visually-hidden">Puzzle Page</span>
+      <PuzzleHeader
+        puzzle={puzzle}
+        dayNumber={dayNumber}
+        isDaily={isDaily}
+        dailyPuzzles={dailyPuzzles}
+      />
+      <Suspense fallback={<PuzzleLoading size={size} />}>
+        <ColorBinarySession key={puzzle.id} puzzle={puzzle} />
+      </Suspense>
+    </div>
+  );
+}
+
+/**
+ * Resolve puzzle object and daily IDs for Color Binary.
+ */
+function resolveColorBinaryData(loaderData?: LoadedPuzzle, puzzleId?: string) {
+  const isColorBinary =
+    !puzzleId ||
+    loaderData?.puzzleType === "color-binary" ||
+    puzzleId.toLowerCase().includes("color-binary") ||
+    puzzleId.toLowerCase().includes("colour-binary") ||
+    puzzleId === "daily";
+
+  if (!isColorBinary && !loaderData) {
+    return null;
+  }
+
+  const puzzle =
+    loaderData?.puzzleType === "color-binary"
+      ? (loaderData.puzzle as ColorBinaryPuzzle)
+      : findColorBinaryPuzzle(puzzleId);
+
+  const dailyPuzzles = loaderData
+    ? {
+        easy: loaderData.dailyEasyId,
+        medium: loaderData.dailyMediumId,
+        hard: loaderData.dailyHardId,
+      }
+    : undefined;
+
+  return { puzzle, dailyPuzzles };
+}
+
+/**
  * Top-level puzzle page.
  * Resolves current puzzle from route loader and renders with Suspense protection.
  * Supports Color Binary, Guzzle, and fallback views.
@@ -178,71 +262,32 @@ export function PuzzlePage() {
   const { puzzleId: paramPuzzleId } = useParams<{ puzzleId: string }>();
   const puzzleId = loaderData?.puzzleId ?? paramPuzzleId;
 
-  /* Check if this is a Guzzle puzzle */
-  const isGuzzle =
-    loaderData?.puzzleType === "guzzle" ||
-    isGuzzlePuzzleId(puzzleId);
-
+  const isGuzzle = loaderData?.puzzleType === "guzzle" || isGuzzlePuzzleId(puzzleId);
   if (isGuzzle) {
-    const guzzlePuzzle =
+    const puzzle =
       loaderData?.puzzleType === "guzzle"
         ? (loaderData.puzzle as GuzzlePuzzle)
         : findGuzzlePuzzle(puzzleId);
-
     return (
-      <div className={styles.container}>
-        <title>{text.puzzlePage.title(text.guzzle.name)}</title>
-        <span className="visually-hidden">Puzzle Page</span>
-        <GuzzlePuzzleHeader
-          puzzle={guzzlePuzzle}
-          dayNumber={loaderData?.dayNumber}
-          isDaily={loaderData?.isDaily}
-        />
-        <Suspense fallback={<PuzzleLoading size={guzzlePuzzle.size} />}>
-          <GuzzleSession key={guzzlePuzzle.id} puzzle={guzzlePuzzle} />
-        </Suspense>
-      </div>
-    );
-  }
-
-  const isColorBinary =
-    !puzzleId ||
-    loaderData?.puzzleType === "color-binary" ||
-    puzzleId.toLowerCase().includes("color-binary") ||
-    puzzleId.toLowerCase().includes("colour-binary") ||
-    puzzleId === "daily";
-
-  if (!isColorBinary && !loaderData) {
-    return <FallbackPuzzle puzzleId={puzzleId} />;
-  }
-
-  const puzzle =
-    loaderData?.puzzleType === "color-binary"
-      ? (loaderData.puzzle as ColorBinaryPuzzle)
-      : findColorBinaryPuzzle(puzzleId);
-
-  const size = sizes[puzzle.difficulty];
-  const dailyPuzzles = loaderData
-    ? {
-        easy: loaderData.dailyEasyId,
-        medium: loaderData.dailyMediumId,
-        hard: loaderData.dailyHardId,
-      }
-    : undefined;
-
-  return (
-    <div className={styles.container}>
-      <title>{text.puzzlePage.title(words.name)}</title>
-      <span className="visually-hidden">Puzzle Page</span>
-      <PuzzleHeader
+      <GuzzlePuzzleView
         puzzle={puzzle}
         dayNumber={loaderData?.dayNumber}
         isDaily={loaderData?.isDaily}
-        dailyPuzzles={dailyPuzzles}
       />
-      <Suspense fallback={<PuzzleLoading size={size} />}>
-        <ColorBinarySession key={puzzle.id} puzzle={puzzle} />
-      </Suspense>
-    </div>
+    );
+  }
+
+  const cbData = resolveColorBinaryData(loaderData, puzzleId);
+  if (!cbData) {
+    return <FallbackPuzzle puzzleId={puzzleId} />;
+  }
+
+  return (
+    <ColorBinaryPuzzleView
+      puzzle={cbData.puzzle}
+      dayNumber={loaderData?.dayNumber}
+      isDaily={loaderData?.isDaily}
+      dailyPuzzles={cbData.dailyPuzzles}
+    />
   );
 }

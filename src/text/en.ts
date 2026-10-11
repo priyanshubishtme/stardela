@@ -99,8 +99,7 @@ const colorBinary = {
  */
 const guzzle = {
   name: "Guzzle",
-  summary:
-    "Find four words that cross at one letter. The colors tell you where each letter goes.",
+  summary: "Find four words that cross at one letter. The colors tell you where each letter goes.",
   rules: [
     "Four words cross at the center letter: across, down and two diagonals.",
     "All words have the same length.",
@@ -179,4 +178,3 @@ export const text = {
     homeLink: "Go to the home page",
   },
 };
-

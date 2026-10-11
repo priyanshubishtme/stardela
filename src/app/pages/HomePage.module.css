@@ -1,36 +1,43 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding: 1.5rem 0 4rem;
-  max-width: 800px;
+  gap: 1.15rem;
+  padding: 0.75rem 0 1.5rem;
+  max-width: 960px;
   margin: 0 auto;
   width: 100%;
 }
 
 .header {
-  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 .dayBadge {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   background-color: var(--accent-bg);
   color: var(--accent-text);
   border: 1px solid var(--accent-border);
-  padding: 0.3rem 0.75rem;
+  padding: 0.2rem 0.6rem;
   border-radius: 9999px;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 0.75rem;
 }
 
 .title {
   margin: 0;
-  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--text-h);
@@ -38,61 +45,66 @@
 
 .subtitle {
   color: var(--text-muted);
-  font-size: 1.05rem;
-  margin-top: 0.5rem;
-  max-width: 52ch;
+  font-size: 0.9375rem;
+  margin: 0;
 }
 
-/* --- Daily challenge info section --- */
+/* --- Compact Daily Banner --- */
 
-.dailyInfo {
+.dailyBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  padding: 0.65rem 1rem;
   box-shadow: var(--shadow-sm);
 }
 
-.dailyInfoTitle {
+.dailyIcon {
   font-size: 1rem;
-  font-weight: 700;
-  color: var(--text-h);
-  margin: 0 0 0.5rem;
+  flex-shrink: 0;
 }
 
-.dailyInfoText {
-  font-size: 0.9375rem;
+.dailyText {
+  font-size: 0.875rem;
   color: var(--text);
-  line-height: 1.55;
-  margin: 0 0 0.35rem;
+  line-height: 1.45;
+  margin: 0;
 }
 
-.dailyInfoHighlight {
+.dailyHighlight {
   font-weight: 600;
   color: var(--accent-text);
 }
 
-/* --- Puzzle section --- */
+/* --- Puzzle Grid Section --- */
+
+.puzzleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
 
 .puzzleHeading {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border);
-  font-size: 1.25rem;
+  margin: 0;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-h);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.35rem;
 }
 
 .puzzleGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.25rem;
+  gap: 0.85rem;
 }
 
-@media (min-width: 560px) {
+@media (min-width: 720px) {
   .puzzleGrid {
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -100,13 +112,17 @@
   background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  transition: box-shadow 150ms ease, border-color 150ms ease;
+  padding: 1.1rem;
+  transition:
+    box-shadow 150ms ease,
+    border-color 150ms ease;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  justify-content: space-between;
+  gap: 0.75rem;
   box-shadow: var(--shadow-sm);
+  min-height: 160px;
 }
 
 .puzzleCard:hover {
@@ -114,16 +130,22 @@
   box-shadow: var(--shadow-md);
 }
 
+.puzzleCardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
 .comingSoonBadge {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 0.85rem;
+  right: 0.85rem;
   background-color: var(--code-bg);
   color: var(--text-muted);
   border: 1px solid var(--border);
-  padding: 0.2rem 0.55rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 9999px;
-  font-size: 0.7rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -131,34 +153,34 @@
 
 .puzzleName {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--text-h);
 }
 
 .puzzleSummary {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: 0.84rem;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 .difficultyList {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 0.4rem;
+  margin-top: auto;
 }
 
 .difficultyBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.4rem 1rem;
+  padding: 0.35rem 0.75rem;
   background-color: var(--accent);
   color: var(--on-accent);
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
   font-weight: 600;
   text-decoration: none;
   transition: background-color 150ms ease;
@@ -167,4 +189,15 @@
 
 .difficultyBtn:hover {
   background-color: var(--accent-hover);
+}
+
+.secondaryBtn {
+  background-color: var(--code-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.secondaryBtn:hover {
+  background-color: var(--surface);
+  color: var(--text-h);
 }

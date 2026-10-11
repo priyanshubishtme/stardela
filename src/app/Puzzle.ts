@@ -6,15 +6,8 @@
 
 import type { LoaderFunctionArgs } from "react-router";
 import { getOrGenerateDailyPuzzles } from "./daily";
-import {
-  findColorBinaryPuzzle,
-  type ColorBinaryPuzzle,
-} from "./puzzle-types/color-binary/puzzles";
-import {
-  findGuzzlePuzzle,
-  guzzleExample,
-  type GuzzlePuzzle,
-} from "./puzzle-types/guzzle/puzzles";
+import { findColorBinaryPuzzle, type ColorBinaryPuzzle } from "./puzzle-types/color-binary/puzzles";
+import { findGuzzlePuzzle, guzzleExample, type GuzzlePuzzle } from "./puzzle-types/guzzle/puzzles";
 
 /**
  * Identifier string for a puzzle category.

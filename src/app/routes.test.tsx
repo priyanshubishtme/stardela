@@ -20,11 +20,12 @@ describe("routes - root and error", () => {
     expect(colorBinary).toBeDefined();
 
     const badges = screen.getAllByText("Coming Soon");
-    expect(badges).toHaveLength(2);
+    expect(badges).toHaveLength(1);
 
     expect(screen.getByRole("link", { name: "Easy" }).getAttribute("href")).toBe(
       "/puzzles/colour-binary-0005",
     );
+    expect(screen.getByRole("link", { name: "Play Daily" })).toBeDefined();
   });
 
   it("shows the not found page for an unknown route", async () => {
@@ -78,5 +79,20 @@ describe("routes - puzzle pages", () => {
     expect(heading).toBeDefined();
     expect(screen.getByText("Puzzle colour-binary-0005")).toBeDefined();
     expect(screen.getByText("Level: easy")).toBeDefined();
+  });
+});
+
+describe("routes - guzzle page", () => {
+  it("renders the Guzzle puzzle page for /guzzle", async () => {
+    const router = createMemoryRouter(routes, {
+      initialEntries: ["/guzzle"],
+    });
+
+    render(<RouterProvider router={router} />);
+
+    const heading = await screen.findByRole("heading", { name: "Guzzle", level: 1 });
+    expect(heading).toBeDefined();
+    expect(screen.getByText("RULES")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Reset" })).toBeDefined();
   });
 });

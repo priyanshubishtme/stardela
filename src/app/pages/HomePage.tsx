@@ -1,6 +1,6 @@
 /**
  * Home Page component.
- * Displays daily challenge information, featured puzzle types,
+ * Displays daily challenge banner, featured puzzle types,
  * and quick-start links for Color Binary and Guzzle.
  */
 
@@ -23,24 +23,20 @@ const levels: { key: Difficulty; label: string }[] = [
 ];
 
 /**
- * Explain how the daily challenge works.
+ * Compact banner explaining daily puzzle refresh.
  */
 function DailyInfo({ dayNumber }: { dayNumber: number }) {
   return (
-    <section className={styles.dailyInfo} aria-label="About the daily challenge">
-      <h2 className={styles.dailyInfoTitle}>
-        Daily Challenge — Day {dayNumber}
-      </h2>
-      <p className={styles.dailyInfoText}>
-        Every day, Skardela picks a new set of puzzles for you.
-        Solve <span className={styles.dailyInfoHighlight}>Colour Binary</span> in three difficulty levels (Easy 4×4, Medium 6×6, Hard 8×8),
-        or take on the <span className={styles.dailyInfoHighlight}>Guzzle</span> cross-word daily challenge!
+    <div className={styles.dailyBanner} aria-label="About the daily challenge">
+      <span className={styles.dailyIcon} aria-hidden="true">
+        🌟
+      </span>
+      <p className={styles.dailyText}>
+        <strong>Day {dayNumber} Daily Challenge:</strong> Puzzles reset at midnight. Solve{" "}
+        <span className={styles.dailyHighlight}>Colour Binary</span> (Easy, Medium, Hard) or{" "}
+        <span className={styles.dailyHighlight}>Guzzle</span> cross-word daily challenge!
       </p>
-      <p className={styles.dailyInfoText}>
-        The daily puzzles reset at midnight. Come back tomorrow for a fresh set.
-        Can you solve all puzzles before the day ends?
-      </p>
-    </section>
+    </div>
   );
 }
 
@@ -51,8 +47,10 @@ function DailyInfo({ dayNumber }: { dayNumber: number }) {
 function ColourBinaryCard({ dailyPuzzles }: { dailyPuzzles: DailyPuzzleSet }) {
   return (
     <div className={styles.puzzleCard}>
-      <h3 className={styles.puzzleName}>{colorBinary.name}</h3>
-      <p className={styles.puzzleSummary}>{colorBinary.summary}</p>
+      <div className={styles.puzzleCardContent}>
+        <h3 className={styles.puzzleName}>{colorBinary.name}</h3>
+        <p className={styles.puzzleSummary}>{colorBinary.summary}</p>
+      </div>
       <div className={styles.difficultyList}>
         {levels.map(({ key, label }) => (
           <Link
@@ -75,13 +73,15 @@ function ColourBinaryCard({ dailyPuzzles }: { dailyPuzzles: DailyPuzzleSet }) {
 function GuzzleCard({ dailyPuzzleId }: { dailyPuzzleId: string }) {
   return (
     <div className={styles.puzzleCard}>
-      <h3 className={styles.puzzleName}>{guzzle.name}</h3>
-      <p className={styles.puzzleSummary}>{guzzle.summary}</p>
+      <div className={styles.puzzleCardContent}>
+        <h3 className={styles.puzzleName}>{guzzle.name}</h3>
+        <p className={styles.puzzleSummary}>{guzzle.summary}</p>
+      </div>
       <div className={styles.difficultyList}>
         <Link to={`/puzzles/${dailyPuzzleId}`} className={styles.difficultyBtn}>
           Play Daily
         </Link>
-        <Link to="/guzzle" className={styles.difficultyBtn}>
+        <Link to="/guzzle" className={`${styles.difficultyBtn} ${styles.secondaryBtn}`}>
           Play
         </Link>
       </div>
@@ -96,15 +96,17 @@ function ComingSoonCard({ title, summary }: { title: string; summary: string }) 
   return (
     <div className={styles.puzzleCard}>
       <span className={styles.comingSoonBadge}>Coming Soon</span>
-      <h3 className={styles.puzzleName}>{title}</h3>
-      <p className={styles.puzzleSummary}>{summary}</p>
+      <div className={styles.puzzleCardContent}>
+        <h3 className={styles.puzzleName}>{title}</h3>
+        <p className={styles.puzzleSummary}>{summary}</p>
+      </div>
     </div>
   );
 }
 
 /**
  * Home page view.
- * Displays day number, daily challenge information, and available puzzle types.
+ * Displays day number, compact daily challenge information, and available puzzle types.
  */
 export function HomePage() {
   const loaderData = useLoaderData<HomeLoaderData>();
@@ -113,16 +115,16 @@ export function HomePage() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <div className={styles.dayBadge}>Day {data.dayNumber}</div>
+        <div className={styles.headerTop}>
+          <div className={styles.dayBadge}>Day {data.dayNumber}</div>
+        </div>
         <h1 className={styles.title}>Puzzle Collection</h1>
-        <p className={styles.subtitle}>
-          Free daily puzzles of new types. No account, no download.
-        </p>
+        <p className={styles.subtitle}>Free daily puzzles of new types. No account, no download.</p>
       </header>
 
       <DailyInfo dayNumber={data.dayNumber} />
 
-      <section>
+      <section className={styles.puzzleSection}>
         <h2 className={styles.puzzleHeading}>Puzzle types</h2>
 
         <div className={styles.puzzleGrid}>

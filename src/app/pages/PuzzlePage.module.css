@@ -81,7 +81,9 @@
   font-weight: 600;
   color: var(--text-muted);
   text-decoration: none;
-  transition: background-color 150ms ease, color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
   user-select: none;
 }
 

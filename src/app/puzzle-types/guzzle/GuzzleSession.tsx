@@ -1,20 +1,12 @@
 /**
- * Playable Guzzle game session.
- * Manage cell selection, letter placement, mistake counting,
- * mode switching ("With bank" / "Without bank"), keyboard typing, and board reset.
+ * Playable Guzzle game session component.
+ * Host rules sidebar, color legend, interactive board, and reset toolbar.
  */
 
-import { useState, useCallback, useEffect } from "react";
 import { text } from "../../../text/en";
-import {
-  type GuzzleCell,
-  type GuzzlePuzzle,
-  createInitialCells,
-  evaluateCell,
-  getLinesForCell,
-  isBoardSolved,
-} from "./puzzles";
+import { type GuzzlePuzzle, isBoardSolved } from "./puzzles";
 import { GuzzleBoard, type GuzzleMode } from "./Board";
+import { useGuzzleSession } from "./useGuzzleSession";
 import styles from "./GuzzleSession.module.css";
 
 /**
@@ -73,166 +65,39 @@ function ColourLegend() {
 }
 
 /**
- * Custom hook to manage the Guzzle game state.
+ * Bottom toolbar with reset button and solved announcement.
  */
-function useGuzzleSession(puzzle: GuzzlePuzzle) {
-  const [cells, setCells] = useState<GuzzleCell[]>(() => createInitialCells(puzzle));
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [mistakes, setMistakes] = useState(0);
-  const [usedBankLetters, setUsedBankLetters] = useState<Set<string>>(new Set());
-  const [mode, setMode] = useState<GuzzleMode>("With bank");
+function GuzzleToolbar({
+  onReset,
+  isSolved,
+  mode,
+  mistakes,
+}: {
+  onReset: () => void;
+  isSolved: boolean;
+  mode: GuzzleMode;
+  mistakes: number;
+}) {
+  return (
+    <>
+      <div className={styles.toolbar}>
+        <button
+          type="button"
+          className={styles.resetBtn}
+          onClick={onReset}
+          aria-label={text.guzzle.resetButton}
+        >
+          {text.guzzle.resetButton}
+        </button>
+      </div>
 
-  /** Place a letter into the currently selected cell */
-  const placeLetter = useCallback(
-    (letter: string) => {
-      if (selectedIndex === null) return;
-      const upperLetter = letter.toUpperCase();
-
-      /* In "With bank" mode, don't allow placing already-used bank letters */
-      if (mode === "With bank" && usedBankLetters.has(upperLetter)) return;
-
-      const cell = cells[selectedIndex];
-      if (!cell || cell.isFixed || cell.isLocked) return;
-
-      const result = evaluateCell(upperLetter, selectedIndex, puzzle);
-      const isCorrect = result === "correct";
-
-      setCells((prev) => {
-        const next = [...prev];
-        next[selectedIndex] = {
-          ...next[selectedIndex]!,
-          letter: upperLetter,
-          result,
-          isLocked: isCorrect,
-        };
-        return next;
-      });
-
-      if (!isCorrect) {
-        setMistakes((prev) => prev + 1);
-      } else {
-        /* When correctly placed, mark bank letter as used */
-        setUsedBankLetters((prev) => new Set(prev).add(upperLetter));
-      }
-
-      setSelectedIndex(null);
-    },
-    [selectedIndex, mode, usedBankLetters, cells, puzzle],
+      {isSolved && (
+        <p aria-live="polite" className="visually-hidden">
+          {`Result: ${mode}, ${mistakes} mistake${mistakes === 1 ? "" : "s"}.`}
+        </p>
+      )}
+    </>
   );
-
-  /** Handle clicking a cell on the board */
-  const handleCellClick = useCallback(
-    (index: number) => {
-      const cell = cells[index];
-      if (!cell) return;
-      if (cell.isFixed || cell.isLocked) return;
-
-      /* Check if the cell is on any word line */
-      const cellLines = getLinesForCell(index, puzzle.size);
-      if (cellLines.length === 0) return;
-
-      setSelectedIndex((prev) => (prev === index ? null : index));
-    },
-    [cells, puzzle.size],
-  );
-
-  /** Handle clicking a letter in the bank */
-  const handleBankLetterClick = useCallback(
-    (letter: string) => {
-      placeLetter(letter);
-    },
-    [placeLetter],
-  );
-
-  /** Clear the currently selected cell if not locked */
-  const clearSelectedCell = useCallback(() => {
-    if (selectedIndex === null) return;
-    const cell = cells[selectedIndex];
-    if (!cell || cell.isFixed || cell.isLocked) return;
-
-    setCells((prev) => {
-      const next = [...prev];
-      next[selectedIndex] = {
-        ...next[selectedIndex]!,
-        letter: null,
-        result: null,
-      };
-      return next;
-    });
-  }, [selectedIndex, cells]);
-
-  /** Reset the entire board */
-  const handleReset = useCallback(() => {
-    setCells(createInitialCells(puzzle));
-    setSelectedIndex(null);
-    setMistakes(0);
-    setUsedBankLetters(new Set());
-  }, [puzzle]);
-
-  /** Keyboard typing listener */
-  useEffect(() => {
-    if (selectedIndex === null) return;
-
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
-        return;
-      }
-
-      const key = e.key;
-
-      if (/^[a-zA-Z]$/.test(key)) {
-        e.preventDefault();
-        placeLetter(key);
-      } else if (key === "Backspace" || key === "Delete") {
-        e.preventDefault();
-        clearSelectedCell();
-      } else if (key === "Escape") {
-        e.preventDefault();
-        setSelectedIndex(null);
-      } else if (key === "ArrowUp") {
-        e.preventDefault();
-        setSelectedIndex((prev) => {
-          if (prev === null) return 0;
-          const next = prev - puzzle.size;
-          return next >= 0 ? next : prev;
-        });
-      } else if (key === "ArrowDown") {
-        e.preventDefault();
-        setSelectedIndex((prev) => {
-          if (prev === null) return 0;
-          const next = prev + puzzle.size;
-          return next < puzzle.size * puzzle.size ? next : prev;
-        });
-      } else if (key === "ArrowLeft") {
-        e.preventDefault();
-        setSelectedIndex((prev) => {
-          if (prev === null) return 0;
-          return prev % puzzle.size > 0 ? prev - 1 : prev;
-        });
-      } else if (key === "ArrowRight") {
-        e.preventDefault();
-        setSelectedIndex((prev) => {
-          if (prev === null) return 0;
-          return prev % puzzle.size < puzzle.size - 1 ? prev + 1 : prev;
-        });
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedIndex, placeLetter, clearSelectedCell, puzzle.size]);
-
-  return {
-    cells,
-    selectedIndex,
-    mistakes,
-    usedBankLetters,
-    mode,
-    setMode,
-    handleCellClick,
-    handleBankLetterClick,
-    handleReset,
-  };
 }
 
 /**
@@ -247,7 +112,7 @@ export default function GuzzleSession({ puzzle }: GuzzleSessionProps) {
     mode,
     setMode,
     handleCellClick,
-    handleBankLetterClick,
+    placeLetter,
     handleReset,
   } = useGuzzleSession(puzzle);
 
@@ -269,25 +134,10 @@ export default function GuzzleSession({ puzzle }: GuzzleSessionProps) {
           mode={mode}
           onModeChange={setMode}
           onCellClick={handleCellClick}
-          onBankLetterClick={handleBankLetterClick}
+          onBankLetterClick={placeLetter}
         />
 
-        <div className={styles.toolbar}>
-          <button
-            type="button"
-            className={styles.resetBtn}
-            onClick={handleReset}
-            aria-label="Reset puzzle board"
-          >
-            {text.guzzle.resetButton}
-          </button>
-        </div>
-
-        {solved && (
-          <p aria-live="polite" className="visually-hidden">
-            {`Result: ${mode}, ${mistakes} mistake${mistakes === 1 ? "" : "s"}.`}
-          </p>
-        )}
+        <GuzzleToolbar onReset={handleReset} isSolved={solved} mode={mode} mistakes={mistakes} />
       </section>
     </div>
   );

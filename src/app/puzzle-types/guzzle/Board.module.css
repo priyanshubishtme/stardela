@@ -42,7 +42,9 @@
   user-select: none;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
 }
 
 .cellLetter {
@@ -156,7 +158,9 @@
   font-weight: 700;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
 }
 
 .bankLetter:hover {
@@ -209,7 +213,9 @@
   color: var(--text-muted);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color 150ms ease, color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
 }
 
 .modeBtn:hover:not(.modeBtnActive) {
@@ -221,4 +227,3 @@
   background-color: var(--accent);
   color: var(--on-accent);
 }
-

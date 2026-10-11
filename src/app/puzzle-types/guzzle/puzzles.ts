@@ -254,4 +254,3 @@ export function findGuzzlePuzzle(id?: string): GuzzlePuzzle {
   const found = guzzlePuzzles.find((p) => p.id.toLowerCase() === id.toLowerCase());
   return found ?? guzzleExample;
 }
-
