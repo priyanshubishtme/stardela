@@ -11,7 +11,7 @@ const level = import.meta.env.DEV ? "DEBUG" : "WARN";
  */
 configure({
   endpoint: "",
-  serviceName: "skardela",
+  serviceName: "stardela",
   storage: "none",
   bus: { mode: "off" },
   minLevel: level,

@@ -3,7 +3,7 @@
  * Provide UI labels, game instructions, and hint messages.
  */
 
-const siteName = "Skardela";
+const siteName = "Stardela";
 
 /**
  * Data structure describing a single hint for Color Binary.
@@ -170,7 +170,11 @@ export const text = {
   "colour-binary": colorBinary,
   guzzle,
   footer: {
-    content: "© 2026 Skardela. All rights reserved.",
+    content: "© 2026 Stardela. All rights reserved.",
+  },
+  theme: {
+    switchToLight: "Switch to light mode",
+    switchToDark: "Switch to dark mode",
   },
   routeError: {
     title: "Something went wrong",

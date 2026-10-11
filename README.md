@@ -1,4 +1,4 @@
-# Skardela — Daily Puzzle Collection
+# Stardela — Daily Puzzle Collection
 
 A modern, distraction-free web puzzle game featuring daily challenges, multiple difficulty tiers, and instant client-side gameplay.
 
@@ -33,8 +33,8 @@ A modern, distraction-free web puzzle game featuring daily challenges, multiple 
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/priyanshubishtme/skardela.git
-   cd skardela
+   git clone https://github.com/priyanshubishtme/stardela.git
+   cd stardela
    ```
 
 2. **Install dependencies**:
@@ -74,7 +74,7 @@ A modern, distraction-free web puzzle game featuring daily challenges, multiple 
    ```
 2. Navigate to [vercel.com](https://vercel.com) and log in.
 3. Click **"Add New..."** > **"Project"**.
-4. Import your **`skardela`** GitHub repository.
+4. Import your **`stardela`** GitHub repository.
 5. In the **Configure Project** screen:
    - **Framework Preset**: `Vite`
    - **Root Directory**: `./` (default)
@@ -98,7 +98,7 @@ A modern, distraction-free web puzzle game featuring daily challenges, multiple 
    - Set up and deploy: **`Y`**
    - Which scope: _(Select your account)_
    - Link to existing project: **`N`**
-   - Project name: `skardela`
+   - Project name: `stardela`
    - In which directory: `./`
 3. For production release:
    ```bash
@@ -109,4 +109,4 @@ A modern, distraction-free web puzzle game featuring daily challenges, multiple 
 
 ## 📜 License
 
-Content and puzzles CC-BY-4.0 by Skardela.
+Content and puzzles CC-BY-4.0 by Stardela.

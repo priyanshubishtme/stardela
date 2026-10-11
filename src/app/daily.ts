@@ -21,7 +21,7 @@ export const EPOCH_DATE = new Date("2026-01-01T00:00:00Z");
 /**
  * Key name used to store daily puzzles in browser local storage.
  */
-export const DAILY_STORAGE_KEY = "skardela_daily_puzzles";
+export const DAILY_STORAGE_KEY = "stardela_daily_puzzles";
 
 /**
  * Data structure for a daily puzzle set.
@@ -120,7 +120,8 @@ export function getRandomPuzzle(difficulty?: Difficulty): ColorBinaryPuzzle {
 export function getStoredDailyPuzzles(): DailyPuzzleSet | null {
   if (typeof localStorage === "undefined") return null;
   try {
-    const raw = localStorage.getItem(DAILY_STORAGE_KEY);
+    const raw =
+      localStorage.getItem(DAILY_STORAGE_KEY) ?? localStorage.getItem("skardela_daily_puzzles");
     if (!raw) return null;
     return JSON.parse(raw) as DailyPuzzleSet;
   } catch {

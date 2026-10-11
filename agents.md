@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Rules for AI agents working in the Skardela project.
+Rules for AI agents working in the Stardela project.
 
 ## Core rules
 

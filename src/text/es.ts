@@ -3,13 +3,13 @@
  * Provide Spanish UI labels and navigation text.
  */
 export const text = {
-  siteName: "Skardela",
+  siteName: "Stardela",
   skipLink: "Saltar al contenido principal",
   nav: {
     label: "Principal",
     home: "Inicio",
   },
   footer: {
-    content: "© 2026 Skardela. Todos los derechos reservados.",
+    content: "© 2026 Stardela. Todos los derechos reservados.",
   },
 };

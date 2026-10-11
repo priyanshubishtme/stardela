@@ -10,7 +10,7 @@ const samplePuzzle: ColorBinaryPuzzle = {
   id: "color-binary-0001",
   type: "color-binary",
   difficulty: "easy",
-  author: "skardela",
+  author: "stardela",
   license: "CC-BY-4.0",
   start: ["R...", "....", "....", "...B"],
   answer: ["RRBB", "BBRR", "RRBB", "BBRR"],

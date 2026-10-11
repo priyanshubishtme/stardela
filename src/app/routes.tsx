@@ -48,15 +48,10 @@ export const routes: RouteObject[] = [
         loader: puzzleLoader,
         hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,
       },
+      {
+        path: "*",
+        element: <NotFoundPage />,
+      },
     ],
-  },
-  {
-    path: "/2",
-    element: <div>Hello from 2!</div>,
-    errorElement: <div>page 2 found</div>,
-  },
-  {
-    path: "*",
-    element: <NotFoundPage />,
   },
 ];

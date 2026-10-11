@@ -213,7 +213,7 @@ export const guzzleExample: GuzzlePuzzle = {
   center: "A",
   words: { across: "CAT", down: "BAG", diagTLBR: "RAN", diagBLTR: "MAP" },
   bank: [..."BCGMNPRT"],
-  author: "skardela",
+  author: "stardela",
   license: "CC-BY-4.0",
 };
 
@@ -228,7 +228,7 @@ export const guzzle0001: GuzzlePuzzle = {
   center: "I",
   words: { across: "TIP", down: "WIN", diagTLBR: "RIM", diagBLTR: "SIX" },
   bank: [..."MNPRSTWX"],
-  author: "skardela",
+  author: "stardela",
   license: "CC-BY-4.0",
 };
 
@@ -243,7 +243,7 @@ export const guzzle0005: GuzzlePuzzle = {
   center: "A",
   words: { across: "TRAIN", down: "CRANE", diagTLBR: "FRAME", diagBLTR: "SPARE" },
   bank: [..."CEEEFIMNNPRRRRST"],
-  author: "skardela",
+  author: "stardela",
   license: "CC-BY-4.0",
 };
 
@@ -258,7 +258,7 @@ export const guzzle0015: GuzzlePuzzle = {
   center: "U",
   words: { across: "MINUTES", down: "FIGURES", diagTLBR: "NATURAL", diagBLTR: "VOLUMES" },
   bank: [..."AAEEEFGIILMMNNORRSSSTTV"],
-  author: "skardela",
+  author: "stardela",
   license: "CC-BY-4.0",
 };
 
