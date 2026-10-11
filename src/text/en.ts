@@ -1,9 +1,15 @@
+const siteName = "Skardela";
+
 export const text = {
-  siteName: "Skardela",
+  siteName,
   skipLink: "Skip to main content",
   nav: {
     label: "Main",
     home: "Home",
+  },
+  puzzlePage: {
+    title: (title: string = "Puzzle") => `${title} | ${siteName}`,
+    loading: "Loading...",
   },
   footer: {
     content: "© 2026 Skardela. All rights reserved.",

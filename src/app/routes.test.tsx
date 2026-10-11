@@ -36,4 +36,15 @@ describe("routes", () => {
     });
     expect(notFoundHeading).toBeDefined();
   });
+
+  it("renders the puzzle page for /puzzles/:puzzleId", async () => {
+    const router = createMemoryRouter(routes, {
+      initialEntries: ["/puzzles/guzzle"],
+    });
+
+    render(<RouterProvider router={router} />);
+
+    const puzzlePageText = await screen.findByText("Puzzle Page");
+    expect(puzzlePageText).toBeDefined();
+  });
 });

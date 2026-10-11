@@ -1,8 +1,10 @@
 import { type RouteObject } from "react-router";
+import { text } from "../text/en";
 import { Layout } from "./Layout";
 import { RouteError } from "./RouteError";
 import { HomePage } from "./pages/HomePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { PuzzlePage } from "./pages/PuzzlePage";
 
 export const routes: RouteObject[] = [
   {
@@ -13,10 +15,12 @@ export const routes: RouteObject[] = [
       {
         index: true,
         element: <HomePage />,
+        hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,
       },
       {
-        path: "1",
-        element: <div>Hello from 1!</div>,
+        path: "puzzles/:puzzleId",
+        element: <PuzzlePage />,
+        hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,
       },
     ],
   },
