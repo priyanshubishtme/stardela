@@ -1,5 +1,15 @@
 const siteName = "Skardela";
 
+export interface ColorBinaryHint {
+  row: number;
+  column: number;
+  color: string;
+  otherColor: string;
+  reason: "half" | "three";
+  line: "row" | "column";
+  number: number;
+}
+
 const colorBinary = {
   name: "Colour Binary",
   summary: "Make each square red or blue. Each line has half of each colour.",
@@ -12,6 +22,18 @@ const colorBinary = {
     start: "Tap a square to make it red. Tap again for blue, and again to make it empty.",
     solved: "You solved the puzzle! Each row and each column obeys the rules.",
   },
+  hintButton: "Hint",
+  hintbutton: "Hint",
+  hint: (hint: ColorBinaryHint) => {
+    const line = `${hint.line === "row" ? "Row" : "Column"} ${hint.number}`;
+    const why =
+      hint.reason === "half"
+        ? `${line} already has half of its squares ${hint.otherColor}.`
+        : `${hint.otherColor} here makes three ${hint.otherColor} squares next to each other in ${line}.`;
+    return `Row ${hint.row}, Column ${hint.column}: ${why} Thus this square is ${hint.color}.`;
+  },
+  noHint: "No hints available",
+  noHInt: "No hints available",
   boardLabel: "Colour Binary Board",
   boardLabels: "Colour Binary Board",
   colors: {
