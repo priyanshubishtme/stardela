@@ -24,19 +24,32 @@ function RulesCard() {
 
   return (
     <aside className={styles.rulesCard} aria-labelledby="guzzle-rules-heading">
-      <div className={styles.rulesHeader}>
-        <h2 id="guzzle-rules-heading" className={styles.rulesTitle}>
-          RULES
-        </h2>
+      <div>
+        <div className={styles.rulesHeader}>
+          <span className={styles.rulesIcon} aria-hidden="true">
+            📜
+          </span>
+          <h2 id="guzzle-rules-heading" className={styles.rulesTitle}>
+            RULES
+          </h2>
+        </div>
+        <ol className={styles.rulesList}>
+          {guzzleRules.map((rule, idx) => (
+            <li key={rule} className={styles.ruleItem}>
+              <span className={styles.ruleNumber}>{idx + 1}</span>
+              <span className={styles.ruleText}>{rule}</span>
+            </li>
+          ))}
+        </ol>
       </div>
-      <ol className={styles.rulesList}>
-        {guzzleRules.map((rule, idx) => (
-          <li key={rule} className={styles.ruleItem}>
-            <span className={styles.ruleNumber}>{idx + 1}.</span>
-            <span className={styles.ruleText}>{rule}</span>
-          </li>
-        ))}
-      </ol>
+
+      <div className={styles.rulesTip}>
+        <div className={styles.rulesTipTitle}>💡 Strategy Tip</div>
+        <div>
+          The center letter is shared by all four words. Focus on letters in crossing lines first to
+          narrow down the bank!
+        </div>
+      </div>
     </aside>
   );
 }

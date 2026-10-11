@@ -121,8 +121,6 @@ function GuzzlePuzzleHeader({
   isDaily,
   dailyPuzzles,
 }: HeaderProps<GuzzlePuzzle>) {
-  const shortNum = puzzle.id.replace(/^[a-z]+-/iu, "#");
-
   return (
     <header className={styles.header}>
       <div className={styles.headerTop}>
@@ -132,11 +130,9 @@ function GuzzlePuzzleHeader({
             <span>Day {dayNumber} Daily Challenge</span>
           </div>
         )}
-        <span className={styles.difficultyBadge}>{puzzle.difficulty}</span>
-        <span className={styles.metaDot}>•</span>
-        <span className={styles.badge}>{shortNum}</span>
-        <span className={styles.metaDot}>•</span>
-        <span className={styles.authorBadge}>by {puzzle.author}</span>
+        <span className={styles.badge}>Level: {puzzle.difficulty}</span>
+        <span className={styles.badge}>Puzzle {puzzle.id}</span>
+        <span className={styles.badge}>by {puzzle.author}</span>
       </div>
       <h1 className={styles.title}>{text.guzzle.name}</h1>
       <DifficultySwitcher
