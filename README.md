@@ -1,8 +1,112 @@
-# Skardela - Puzzle WebApp
+# Skardela — Daily Puzzle Collection
 
-## How to Run
+A modern, distraction-free web puzzle game featuring daily challenges, multiple difficulty tiers, and instant client-side gameplay.
 
-1. Clone the repository and then navigate into the project directory.
-2. Install dependencies using `npm install`.
-3. Start the development server using `npm run dev`.
-4. Open your browser and navigate to `http://localhost:5173` to view the application.
+---
+
+## 🧩 Featured Puzzle Types
+
+- **Colour Binary**: Fill the grid with red and blue tiles following strict parity and adjacency constraints. Available in **Easy (4×4)**, **Medium (6×6)**, and **Hard (8×8)**.
+- **Guzzle**: Cross-word deduction puzzle where four equal-length words meet at a fixed center tile (across, down, and two diagonals). Provides feedback on letter position (Green = correct, Yellow = in line, Red = absent) and playable with or without the letter bank. Available in **Easy (3×3)**, **Medium (5×5)**, and **Hard (7×7)**.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: React 19 + TypeScript
+- **Bundler & Dev Server**: Vite
+- **Routing**: React Router (with SPA history fallback via `vercel.json`)
+- **Linting & Formatting**: Oxlint + Oxfmt
+- **Testing**: Vitest + React Testing Library
+
+---
+
+## 🚀 Local Development
+
+### Prerequisites
+
+- Node.js `24.x` (or LTS `20.x`+)
+- npm `10.x`+
+
+### Setup & Run
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/priyanshubishtme/skardela.git
+   cd skardela
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**:
+
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+4. **Run CI pipeline checks** (Format, Lint, Typecheck, Test, Validate, Build):
+
+   ```bash
+   npm run check
+   ```
+
+5. **Auto-fix formatting and linting**:
+   ```bash
+   npm run fix
+   ```
+
+---
+
+## 🌐 Deploy to Vercel
+
+### Method 1: Deploy via Vercel Dashboard (Recommended)
+
+1. **Push your code to GitHub**:
+   ```bash
+   git push origin master
+   ```
+2. Navigate to [vercel.com](https://vercel.com) and log in.
+3. Click **"Add New..."** > **"Project"**.
+4. Import your **`skardela`** GitHub repository.
+5. In the **Configure Project** screen:
+   - **Framework Preset**: `Vite`
+   - **Root Directory**: `./` (default)
+   - **Build Command**: `npm run build` (or leave default `tsc -b && vite build`)
+   - **Output Directory**: `dist` (default)
+   - **Install Command**: `npm install` (default)
+6. Click **"Deploy"**. Vercel will build and deploy your app with continuous deployment on every `git push`.
+
+> [!NOTE]
+> Client-side routing for `/puzzles/:id` and direct page reloads is pre-configured via [`vercel.json`](./vercel.json) rewrite rules.
+
+---
+
+### Method 2: Deploy via Vercel CLI
+
+1. **Run Vercel CLI directly**:
+   ```bash
+   npx vercel
+   ```
+2. Follow the interactive prompts:
+   - Set up and deploy: **`Y`**
+   - Which scope: _(Select your account)_
+   - Link to existing project: **`N`**
+   - Project name: `skardela`
+   - In which directory: `./`
+3. For production release:
+   ```bash
+   npx vercel --prod
+   ```
+
+---
+
+## 📜 License
+
+Content and puzzles CC-BY-4.0 by Skardela.
