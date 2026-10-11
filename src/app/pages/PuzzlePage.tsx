@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useLoaderData, useParams } from "react-router";
 import { text } from "../../text/en";
 import type { LoadedPuzzle } from "../Puzzle";
@@ -10,7 +10,6 @@ import {
   type ColorBinaryPuzzle,
   type Square,
 } from "../puzzle-types/color-binary/puzzles";
-import { RuleCheck } from "../puzzle-types/color-binary/rulecheck";
 import styles from "./PuzzlePage.module.css";
 
 const words = text["color-binary"];
@@ -102,7 +101,6 @@ function ColorBinaryGame({ puzzle }: { puzzle: ColorBinaryPuzzle }) {
           onSquareClick={handleSquareClick}
         />
         <HintControl onHint={handleHint} message={hintMessage} />
-        <RuleCheck squares={squares} />
       </section>
     </div>
   );
@@ -115,6 +113,15 @@ function FallbackPuzzle({ puzzleId }: { puzzleId?: string }) {
       <h1>{puzzleId ?? "Puzzle"}</h1>
       <p>Puzzle Page</p>
     </div>
+  );
+}
+
+function PuzzleLoading() {
+  return (
+    <output className={styles.loadingArea} aria-live="polite">
+      <div className={styles.loadingSpinner} />
+      <p className={styles.loadingText}>{text.puzzlePage.loading}</p>
+    </output>
   );
 }
 
@@ -139,7 +146,9 @@ export function PuzzlePage() {
       <title>{text.puzzlePage.title(words.name)}</title>
       <span className="visually-hidden">Puzzle Page</span>
       <PuzzleHeader puzzle={puzzle} />
-      <ColorBinaryGame key={puzzle.id} puzzle={puzzle} />
+      <Suspense fallback={<PuzzleLoading />}>
+        <ColorBinaryGame key={puzzle.id} puzzle={puzzle} />
+      </Suspense>
     </div>
   );
 }

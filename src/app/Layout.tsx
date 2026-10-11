@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { Link, Outlet } from "react-router";
 import { text } from "../text/en";
+import { ErrorBoundary } from "./ErrorBoundary";
 import styles from "./Layout.module.css";
 
 export function Layout() {
@@ -17,7 +19,11 @@ export function Layout() {
         </nav>
       </header>
       <main id="main" className={styles.main} tabIndex={-1}>
-        <Outlet />
+        <ErrorBoundary>
+          <Suspense fallback={<p>{text.puzzlePage.loading}</p>}>
+            <Outlet />
+          </Suspense>
+        </ErrorBoundary>
       </main>
       <footer className={styles.footer}>
         <p>{text.footer.content}</p>

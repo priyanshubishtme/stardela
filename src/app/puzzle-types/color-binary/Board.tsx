@@ -1,6 +1,7 @@
 import { type CSSProperties, useState } from "react";
 import { text } from "../../../text/en";
 import { type ColorBinaryPuzzle, type Square, sizes, toSquares } from "./puzzles";
+import { checkRules } from "./rules-check";
 import styles from "./Board.module.css";
 
 const words = text["color-binary"];
@@ -104,7 +105,9 @@ export function Board({
   const squares = externalSquares ?? internalSquares;
   const startSquares = toSquares(puzzle.start);
   const size = sizes[puzzle.difficulty];
-  const isSolved = squares.join("") === toSquares(puzzle.answer).join("");
+  const isSolved =
+    squares.join("") === toSquares(puzzle.answer).join("") ||
+    (!squares.includes(".") && checkRules(squares));
 
   const handleClick = (index: number) => {
     if (startSquares[index] !== ".") return;
