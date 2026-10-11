@@ -1,7 +1,9 @@
 import { type RouteObject } from "react-router";
 import { text } from "../text/en";
 import { Layout } from "./Layout";
+import { puzzleLoader } from "./Puzzle";
 import { RouteError } from "./RouteError";
+import { homeLoader } from "./daily";
 import { HomePage } from "./pages/HomePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { PuzzlePage } from "./pages/PuzzlePage";
@@ -15,21 +17,25 @@ export const routes: RouteObject[] = [
       {
         index: true,
         element: <HomePage />,
+        loader: homeLoader,
         hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,
       },
       {
         path: "color-binary",
         element: <PuzzlePage />,
+        loader: puzzleLoader,
         hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,
       },
       {
         path: "colour-binary",
         element: <PuzzlePage />,
+        loader: puzzleLoader,
         hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,
       },
       {
         path: "puzzles/:puzzleId",
         element: <PuzzlePage />,
+        loader: puzzleLoader,
         hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,
       },
     ],

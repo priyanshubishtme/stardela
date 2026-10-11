@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useParams } from "react-router";
+import { useLoaderData, useParams } from "react-router";
 import { text } from "../../text/en";
+import type { LoadedPuzzle } from "../Puzzle";
 import { Board } from "../puzzle-types/color-binary/Board";
 import { findHint } from "../puzzle-types/color-binary/hint";
 import {
@@ -9,6 +10,7 @@ import {
   type ColorBinaryPuzzle,
   type Square,
 } from "../puzzle-types/color-binary/puzzles";
+import { RuleCheck } from "../puzzle-types/color-binary/rulecheck";
 import styles from "./PuzzlePage.module.css";
 
 const words = text["color-binary"];
@@ -73,6 +75,7 @@ function ColorBinaryGame({ puzzle }: { puzzle: ColorBinaryPuzzle }) {
           {words.hintButton}
         </button>
         {hintMessage && <p className={styles.hintMessage}>{hintMessage}</p>}
+        <RuleCheck squares={squares} />
       </section>
     </div>
   );
@@ -89,7 +92,10 @@ function FallbackPuzzle({ puzzleId }: { puzzleId?: string }) {
 }
 
 export function PuzzlePage() {
-  const { puzzleId } = useParams<{ puzzleId: string }>();
+  const loaderData = useLoaderData<LoadedPuzzle>();
+  const { puzzleId: paramPuzzleId } = useParams<{ puzzleId: string }>();
+  const puzzleId = loaderData?.puzzleId ?? paramPuzzleId;
+
   const isColorBinary =
     !puzzleId ||
     puzzleId.toLowerCase().includes("color-binary") ||
@@ -99,7 +105,7 @@ export function PuzzlePage() {
     return <FallbackPuzzle puzzleId={puzzleId} />;
   }
 
-  const puzzle = findColorBinaryPuzzle(puzzleId);
+  const puzzle = loaderData?.puzzle ?? findColorBinaryPuzzle(puzzleId);
 
   return (
     <div className={styles.container}>
