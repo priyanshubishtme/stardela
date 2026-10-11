@@ -6,12 +6,19 @@ import styles from "./HomePage.module.css";
 
 const colorBinary = text["color-binary"];
 
+/**
+ * Difficulty levels with display labels.
+ */
 const levels: { key: Difficulty; label: string }[] = [
   { key: "easy", label: "Easy" },
   { key: "medium", label: "Medium" },
   { key: "hard", label: "Hard" },
 ];
 
+/**
+ * Card for Colour Binary puzzle.
+ * Displays title, summary, and links to each difficulty level.
+ */
 function ColourBinaryCard({ dailyPuzzles }: { dailyPuzzles: DailyPuzzleSet }) {
   return (
     <div className={styles.puzzleCard}>
@@ -32,6 +39,9 @@ function ColourBinaryCard({ dailyPuzzles }: { dailyPuzzles: DailyPuzzleSet }) {
   );
 }
 
+/**
+ * Placeholder card for unreleased puzzle types.
+ */
 function ComingSoonCard({ title, summary }: { title: string; summary: string }) {
   return (
     <div className={styles.puzzleCard}>
@@ -42,6 +52,10 @@ function ComingSoonCard({ title, summary }: { title: string; summary: string }) 
   );
 }
 
+/**
+ * Home page view.
+ * Displays day number, introduction, and available puzzle types.
+ */
 export function HomePage() {
   const loaderData = useLoaderData<HomeLoaderData>();
   const data = loaderData ?? homeLoader();

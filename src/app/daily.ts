@@ -7,9 +7,19 @@ import {
   type ColorBinaryPuzzle,
 } from "./puzzle-types/color-binary/puzzles";
 
+/**
+ * Start date used to calculate the daily puzzle number.
+ */
 export const EPOCH_DATE = new Date("2026-01-01T00:00:00Z");
+
+/**
+ * Key name used to store daily puzzles in browser local storage.
+ */
 export const DAILY_STORAGE_KEY = "skardela_daily_puzzles";
 
+/**
+ * Data structure for a daily puzzle set.
+ */
 export interface DailyPuzzleSet {
   dayNumber: number;
   date: string;
@@ -20,6 +30,9 @@ export interface DailyPuzzleSet {
   };
 }
 
+/**
+ * Metadata for a puzzle application displayed on the home page.
+ */
 export interface PuzzleAppInfo {
   id: string;
   name: string;
@@ -27,6 +40,9 @@ export interface PuzzleAppInfo {
   isAvailable: boolean;
 }
 
+/**
+ * List of puzzle types shown on the home page.
+ */
 export const puzzleApps: PuzzleAppInfo[] = [
   {
     id: "colour-binary",
@@ -49,22 +65,36 @@ export const puzzleApps: PuzzleAppInfo[] = [
   },
 ];
 
+/**
+ * Data returned by the home page loader.
+ */
 export interface HomeLoaderData {
   dayNumber: number;
   dailyPuzzles: DailyPuzzleSet;
   puzzleApps: PuzzleAppInfo[];
 }
 
+/**
+ * Calculate the day number starting from EPOCH_DATE.
+ * @param date - The target date (defaults to current date).
+ * @returns The positive day number.
+ */
 export function getDayNumber(date: Date = new Date()): number {
   const diffMs = date.getTime() - EPOCH_DATE.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   return Math.max(1, diffDays + 1);
 }
 
+/**
+ * Convert a date object to a YYYY-MM-DD string.
+ */
 export function getTodayDateString(date: Date = new Date()): string {
   return date.toISOString().split("T")[0] ?? "2026-10-11";
 }
 
+/**
+ * Select a random puzzle from the collection, optionally filtered by difficulty.
+ */
 export function getRandomPuzzle(difficulty?: Difficulty): ColorBinaryPuzzle {
   const pool = difficulty
     ? colorBinaryPuzzles.filter((p) => p.difficulty === difficulty)
@@ -73,6 +103,10 @@ export function getRandomPuzzle(difficulty?: Difficulty): ColorBinaryPuzzle {
   return pool[index] ?? defaultColorBinaryPuzzle;
 }
 
+/**
+ * Read the cached daily puzzle set from local storage.
+ * @returns Cached set or null if not found.
+ */
 export function getStoredDailyPuzzles(): DailyPuzzleSet | null {
   if (typeof localStorage === "undefined") return null;
   try {
@@ -84,21 +118,30 @@ export function getStoredDailyPuzzles(): DailyPuzzleSet | null {
   }
 }
 
+/**
+ * Save the daily puzzle set to local storage.
+ */
 export function saveDailyPuzzles(data: DailyPuzzleSet): void {
   if (typeof localStorage === "undefined") return;
   try {
     localStorage.setItem(DAILY_STORAGE_KEY, JSON.stringify(data));
   } catch {
-    // Storage might be unavailable
+    // Storage write failed or is disabled
   }
 }
 
+/**
+ * Helper to pick a random puzzle ID from a list.
+ */
 function pickRandomPuzzleId(list: ColorBinaryPuzzle[], fallbackId: string): string {
   if (list.length === 0) return fallbackId;
   const idx = Math.floor(Math.random() * list.length);
   return list[idx]?.id ?? fallbackId;
 }
 
+/**
+ * Create a new set of puzzles for the given date.
+ */
 export function createDailyPuzzleSet(date: Date = new Date()): DailyPuzzleSet {
   const dayNumber = getDayNumber(date);
   const dateStr = getTodayDateString(date);
@@ -118,6 +161,10 @@ export function createDailyPuzzleSet(date: Date = new Date()): DailyPuzzleSet {
   };
 }
 
+/**
+ * Get daily puzzles. Reads from local storage if available for today;
+ * otherwise generates a new daily set and saves it.
+ */
 export function getOrGenerateDailyPuzzles(date: Date = new Date()): DailyPuzzleSet {
   const dayNumber = getDayNumber(date);
   const stored = getStoredDailyPuzzles();
@@ -129,6 +176,10 @@ export function getOrGenerateDailyPuzzles(date: Date = new Date()): DailyPuzzleS
   return fresh;
 }
 
+/**
+ * Route loader for the home page.
+ * Returns day number, daily puzzle IDs, and puzzle type list.
+ */
 export function homeLoader(): HomeLoaderData {
   const dailyPuzzles = getOrGenerateDailyPuzzles();
   return {

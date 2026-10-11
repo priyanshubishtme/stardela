@@ -1,11 +1,23 @@
+/**
+ * Validation logic for Color Binary puzzle rules.
+ * Verify that no three identical colors touch and counts do not exceed half the line length.
+ */
+
 import type { Square } from "./puzzles";
 
+/**
+ * Result of validating puzzle rules across the board.
+ */
 export interface RuleCheckResult {
   isFollowed: boolean;
   isComplete: boolean;
   violations: string[];
 }
 
+/**
+ * Check if a row or column has three identical colors in sequence.
+ * Return an error message or null if the sequence rule is obeyed.
+ */
 function checkLineConsecutive(line: readonly Square[], lineName: string): string | null {
   let prev: Square = ".";
   let count = 0;
@@ -25,6 +37,10 @@ function checkLineConsecutive(line: readonly Square[], lineName: string): string
   return null;
 }
 
+/**
+ * Check if a row or column has more than the allowed count of one color.
+ * Return an error message or null if counts do not exceed the limit.
+ */
 function checkLineHalf(line: readonly Square[], half: number, lineName: string): string | null {
   const reds = line.filter((s) => s === "R").length;
   const blues = line.filter((s) => s === "B").length;
@@ -38,6 +54,10 @@ function checkLineHalf(line: readonly Square[], half: number, lineName: string):
   return null;
 }
 
+/**
+ * Check all rows and columns on the board for rule violations.
+ * Return a list of all detected rule violation messages.
+ */
 export function getRuleViolations(squares: readonly Square[]): string[] {
   const size = Math.sqrt(squares.length);
   const half = size / 2;
@@ -62,6 +82,10 @@ export function getRuleViolations(squares: readonly Square[]): string[] {
   return violations;
 }
 
+/**
+ * Check if the board state complies with all game rules.
+ * Return complete validation status, completion flag, and violation messages.
+ */
 export function checkRulesAreFollowed(squares: readonly Square[]): RuleCheckResult {
   const violations = getRuleViolations(squares);
   const isFollowed = violations.length === 0;
@@ -69,6 +93,10 @@ export function checkRulesAreFollowed(squares: readonly Square[]): RuleCheckResu
   return { isFollowed, isComplete, violations };
 }
 
+/**
+ * Check if the board has zero rule violations.
+ * Return true when all rules are followed, otherwise return false.
+ */
 export function checkRules(squares: readonly Square[]): boolean {
   return getRuleViolations(squares).length === 0;
 }

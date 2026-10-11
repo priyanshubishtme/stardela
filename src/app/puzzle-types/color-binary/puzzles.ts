@@ -1,7 +1,18 @@
+/**
+ * Puzzle definitions and helper utilities for Color Binary.
+ * This module provides board configurations for easy, medium, and hard levels.
+ */
+
 import type { Difficulty } from "../../../shared/difficulty";
 
+/**
+ * Represent a square state: Red ("R"), Blue ("B"), or empty (".").
+ */
 export type Square = "R" | "B" | ".";
 
+/**
+ * Structure of a Color Binary puzzle configuration.
+ */
 export interface ColorBinaryPuzzle {
   readonly id: string;
   readonly type: "color-binary";
@@ -12,12 +23,18 @@ export interface ColorBinaryPuzzle {
   readonly answer: readonly string[];
 }
 
+/**
+ * Board dimensions (grid edge length) for each difficulty level.
+ */
 export const sizes: Record<Difficulty, number> = {
   easy: 4,
   medium: 6,
   hard: 8,
 };
 
+/**
+ * Easy 4x4 Color Binary puzzle configuration.
+ */
 export const defaultColorBinaryPuzzle: ColorBinaryPuzzle = {
   id: "colour-binary-0005",
   type: "color-binary",
@@ -28,6 +45,9 @@ export const defaultColorBinaryPuzzle: ColorBinaryPuzzle = {
   answer: ["BRRB", "RBRB", "RBBR", "BRBR"],
 };
 
+/**
+ * Medium 6x6 Color Binary puzzle configuration.
+ */
 export const mediumColorBinaryPuzzle: ColorBinaryPuzzle = {
   id: "colour-binary-0006",
   type: "color-binary",
@@ -38,6 +58,9 @@ export const mediumColorBinaryPuzzle: ColorBinaryPuzzle = {
   answer: ["BBRRBR", "RRBBRB", "BRRBBR", "RBBRRB", "RBRBRB", "BBRRBR"],
 };
 
+/**
+ * Hard 8x8 Color Binary puzzle configuration.
+ */
 export const hardColorBinaryPuzzle: ColorBinaryPuzzle = {
   id: "colour-binary-0007",
   type: "color-binary",
@@ -66,12 +89,19 @@ export const hardColorBinaryPuzzle: ColorBinaryPuzzle = {
   ],
 };
 
+/**
+ * List of all available Color Binary puzzles.
+ */
 export const colorBinaryPuzzles: ColorBinaryPuzzle[] = [
   defaultColorBinaryPuzzle,
   mediumColorBinaryPuzzle,
   hardColorBinaryPuzzle,
 ];
 
+/**
+ * Find a puzzle by identifier or difficulty keyword.
+ * Return the matched puzzle or the default easy puzzle.
+ */
 export function findColorBinaryPuzzle(id?: string): ColorBinaryPuzzle {
   if (!id) return defaultColorBinaryPuzzle;
   const normalized = id.toLowerCase().replace(/^color-/u, "colour-");
@@ -84,10 +114,16 @@ export function findColorBinaryPuzzle(id?: string): ColorBinaryPuzzle {
   return found ?? defaultColorBinaryPuzzle;
 }
 
+/**
+ * Convert string rows into a flat array of squares.
+ */
 export function toSquares(rows: readonly string[]): Square[] {
   return [...rows.join("")] as Square[];
 }
 
+/**
+ * Convert a flat array of squares into string rows.
+ */
 export function toRows(squares: readonly Square[]): string[] {
   const size = Math.sqrt(squares.length);
   return Array.from({ length: size }, (_, row) =>

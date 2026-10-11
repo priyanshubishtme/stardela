@@ -4,6 +4,10 @@ import { text } from "../text/en";
 import { ErrorBoundary } from "./ErrorBoundary";
 import styles from "./Layout.module.css";
 
+/**
+ * Main application layout.
+ * Displays site navigation, page content with error/loading protection, and footer.
+ */
 export function Layout() {
   return (
     <>

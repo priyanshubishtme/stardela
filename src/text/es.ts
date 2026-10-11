@@ -1,4 +1,7 @@
-// Spanish translations for the application
+/**
+ * Spanish text and localization dictionary for the application.
+ * Provide Spanish UI labels and navigation text.
+ */
 export const text = {
   siteName: "Skardela",
   skipLink: "Saltar al contenido principal",

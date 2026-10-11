@@ -1,9 +1,17 @@
+/**
+ * Route error fallback component.
+ * Log routing errors and display an error page with a home link.
+ */
+
 import { getLogger } from "@utk09/ui-observability";
 import { useEffect } from "react";
 import { isRouteErrorResponse, Link, useRouteError } from "react-router";
 import { text } from "../text/en";
 import styles from "./RouteError.module.css";
 
+/**
+ * Render error details when route loading or rendering fails.
+ */
 export function RouteError() {
   const error = useRouteError();
   useEffect(() => {

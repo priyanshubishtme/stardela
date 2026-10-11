@@ -1,6 +1,10 @@
 import { Link } from "react-router";
 import styles from "./NotFoundPage.module.css";
 
+/**
+ * 404 Page Not Found view.
+ * Rendered when a requested URL does not match any known route.
+ */
 export function NotFoundPage() {
   return (
     <div className={styles.container}>

@@ -8,6 +8,10 @@ import { HomePage } from "./pages/HomePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { PuzzlePage } from "./pages/PuzzlePage";
 
+/**
+ * Route definitions for the application.
+ * Connects paths to pages, data loaders, and error fallbacks.
+ */
 export const routes: RouteObject[] = [
   {
     path: "/",

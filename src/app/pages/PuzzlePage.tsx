@@ -14,6 +14,9 @@ import styles from "./PuzzlePage.module.css";
 
 const words = text["color-binary"];
 
+/**
+ * Header section with puzzle name and metadata badges.
+ */
 function PuzzleHeader({ puzzle }: { puzzle: ColorBinaryPuzzle }) {
   return (
     <header className={styles.header}>
@@ -27,6 +30,9 @@ function PuzzleHeader({ puzzle }: { puzzle: ColorBinaryPuzzle }) {
   );
 }
 
+/**
+ * Card explaining the game rules to the player.
+ */
 function RulesCard() {
   return (
     <section className={styles.rulesCard} aria-labelledby="rules-heading">
@@ -42,11 +48,17 @@ function RulesCard() {
   );
 }
 
+/**
+ * Props for the HintControl component.
+ */
 interface HintControlProps {
   onHint: () => void;
   message: string | null;
 }
 
+/**
+ * Hint button and message container.
+ */
 function HintControl({ onHint, message }: HintControlProps) {
   return (
     <>
@@ -58,6 +70,10 @@ function HintControl({ onHint, message }: HintControlProps) {
   );
 }
 
+/**
+ * Playable Color Binary game session.
+ * Manages board squares, cell clicks, and hint highlighting.
+ */
 function ColorBinaryGame({ puzzle }: { puzzle: ColorBinaryPuzzle }) {
   const [squares, setSquares] = useState<Square[]>(() => toSquares(puzzle.start));
   const [hintMessage, setHintMessage] = useState<string | null>(null);
@@ -106,6 +122,9 @@ function ColorBinaryGame({ puzzle }: { puzzle: ColorBinaryPuzzle }) {
   );
 }
 
+/**
+ * Fallback page for non-Color-Binary puzzle IDs.
+ */
 function FallbackPuzzle({ puzzleId }: { puzzleId?: string }) {
   return (
     <div className={styles.container}>
@@ -116,6 +135,9 @@ function FallbackPuzzle({ puzzleId }: { puzzleId?: string }) {
   );
 }
 
+/**
+ * Loading fallback rendered during React Suspense.
+ */
 function PuzzleLoading() {
   return (
     <output className={styles.loadingArea} aria-live="polite">
@@ -125,6 +147,10 @@ function PuzzleLoading() {
   );
 }
 
+/**
+ * Top-level puzzle page.
+ * Resolves current puzzle from route loader and renders with Suspense protection.
+ */
 export function PuzzlePage() {
   const loaderData = useLoaderData<LoadedPuzzle>();
   const { puzzleId: paramPuzzleId } = useParams<{ puzzleId: string }>();

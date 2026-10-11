@@ -1,9 +1,18 @@
+/**
+ * Hint calculation engine for Color Binary puzzles.
+ * This module finds the next logical move when a player requests a hint.
+ */
+
 import { text } from "../../../text/en";
 import type { ColorBinaryHint } from "../../../text/en";
 import type { Square } from "./puzzles";
 
 const words = text["color-binary"];
 
+/**
+ * Check if placing a color creates three identical colors in a row.
+ * Return true if three identical colors become adjacent horizontally.
+ */
 function hasThreeInRow(
   squares: readonly Square[],
   r: number,
@@ -20,6 +29,10 @@ function hasThreeInRow(
   return left || middle || right;
 }
 
+/**
+ * Check if placing a color creates three identical colors in a column.
+ * Return true if three identical colors become adjacent vertically.
+ */
 function hasThreeInCol(
   squares: readonly Square[],
   r: number,
@@ -36,6 +49,10 @@ function hasThreeInCol(
   return top || middle || bottom;
 }
 
+/**
+ * Check if a row already contains the maximum allowed count of a color.
+ * Return true if the color count equals or exceeds half the grid size.
+ */
 function hasHalfInRow(
   squares: readonly Square[],
   r: number,
@@ -49,6 +66,10 @@ function hasHalfInRow(
   return count >= size / 2;
 }
 
+/**
+ * Check if a column already contains the maximum allowed count of a color.
+ * Return true if the color count equals or exceeds half the grid size.
+ */
 function hasHalfInCol(
   squares: readonly Square[],
   c: number,
@@ -62,6 +83,10 @@ function hasHalfInCol(
   return count >= size / 2;
 }
 
+/**
+ * Check if placing a color at an index violates any puzzle rule.
+ * Return the broken rule details or null if the placement is valid.
+ */
 export function brokenRule(
   squares: readonly Square[],
   index: number,
@@ -87,6 +112,10 @@ export function brokenRule(
   return null;
 }
 
+/**
+ * Scan the board and find the first empty square with a forced move.
+ * Return hint details or null if no hint is available.
+ */
 export function findHint(squares: readonly Square[]): ColorBinaryHint | null {
   const size = Math.sqrt(squares.length);
 

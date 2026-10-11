@@ -1,5 +1,13 @@
+/**
+ * English text and localization dictionary for the application.
+ * Provide UI labels, game instructions, and hint messages.
+ */
+
 const siteName = "Skardela";
 
+/**
+ * Data structure describing a single hint for Color Binary.
+ */
 export interface ColorBinaryHint {
   row: number;
   column: number;
@@ -10,6 +18,9 @@ export interface ColorBinaryHint {
   number: number;
 }
 
+/**
+ * English vocabulary, instructions, and hint builders for Color Binary.
+ */
 const colorBinary = {
   name: "Colour Binary",
   summary: "Make each square red or blue. Each line has half of each colour.",
@@ -83,6 +94,9 @@ const colorBinary = {
   },
 };
 
+/**
+ * Main localization catalog for English.
+ */
 export const text = {
   siteName,
   skipLink: "Skip to main content",

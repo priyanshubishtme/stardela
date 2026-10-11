@@ -8,6 +8,9 @@ const words = text["color-binary"];
 
 type GridStyle = CSSProperties & { "--size": number };
 
+/**
+ * Props for the Board component.
+ */
 export interface BoardProps {
   puzzle: ColorBinaryPuzzle;
   squares?: readonly Square[];
@@ -15,12 +18,18 @@ export interface BoardProps {
   onSquareClick?: (index: number) => void;
 }
 
+/**
+ * State cycle for squares: empty (.), red (R), blue (B), and back to empty.
+ */
 const NEXT_SQUARE: Record<Square, Square> = {
   ".": "R",
   R: "B",
   B: ".",
 };
 
+/**
+ * Props for a single square button in the grid.
+ */
 interface SquareButtonProps {
   square: Square;
   index: number;
@@ -30,6 +39,9 @@ interface SquareButtonProps {
   onClick: () => void;
 }
 
+/**
+ * Render a single grid cell button with accessibility label and color styles.
+ */
 function SquareButton({ square, index, size, isFixed, isHighlighted, onClick }: SquareButtonProps) {
   const row = Math.floor(index / size) + 1;
   const col = (index % size) + 1;
@@ -60,6 +72,9 @@ function SquareButton({ square, index, size, isFixed, isHighlighted, onClick }: 
   );
 }
 
+/**
+ * Props for the grid container.
+ */
 interface BoardGridProps {
   squares: readonly Square[];
   startSquares: readonly Square[];
@@ -68,6 +83,9 @@ interface BoardGridProps {
   onSquareClick: (index: number) => void;
 }
 
+/**
+ * Render the full grid of square buttons using dynamic CSS size variable.
+ */
 function BoardGrid({ squares, startSquares, size, highlightIndex, onSquareClick }: BoardGridProps) {
   const gridStyle: GridStyle = { "--size": size };
   const cells = squares.map((square, index) => ({
@@ -95,6 +113,10 @@ function BoardGrid({ squares, startSquares, size, highlightIndex, onSquareClick 
   );
 }
 
+/**
+ * Interactive puzzle board.
+ * Manages player inputs, cycles square colors, and validates solution state.
+ */
 export function Board({
   puzzle,
   squares: externalSquares,
