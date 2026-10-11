@@ -66,7 +66,7 @@ A modern, distraction-free web puzzle game featuring daily challenges, multiple 
 
 ## 🌐 Deploy to Vercel
 
-### Method 1: Deploy via Vercel Dashboard (Recommended)
+Deploy via Vercel Dashboard
 
 1. **Push your code to GitHub**:
    ```bash
@@ -87,23 +87,6 @@ A modern, distraction-free web puzzle game featuring daily challenges, multiple 
 > Client-side routing for `/puzzles/:id` and direct page reloads is pre-configured via [`vercel.json`](./vercel.json) rewrite rules.
 
 ---
-
-### Method 2: Deploy via Vercel CLI
-
-1. **Run Vercel CLI directly**:
-   ```bash
-   npx vercel
-   ```
-2. Follow the interactive prompts:
-   - Set up and deploy: **`Y`**
-   - Which scope: _(Select your account)_
-   - Link to existing project: **`N`**
-   - Project name: `stardela`
-   - In which directory: `./`
-3. For production release:
-   ```bash
-   npx vercel --prod
-   ```
 
 ---
 
