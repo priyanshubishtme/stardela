@@ -25,20 +25,29 @@ export interface ColorBinarySessionProps {
 function RulesCard() {
   return (
     <aside className={styles.rulesCard} aria-labelledby="rules-heading">
-      <div className={styles.rulesHeader}>
-        <span className={styles.rulesIcon}>📋</span>
-        <h2 id="rules-heading" className={styles.rulesTitle}>
-          RULES
-        </h2>
+      <div>
+        <div className={styles.rulesHeader}>
+          <span className={styles.rulesIcon}>📜</span>
+          <h2 id="rules-heading" className={styles.rulesTitle}>
+            RULES
+          </h2>
+        </div>
+        <ol className={styles.rulesList}>
+          {words.rules.map((rule, idx) => (
+            <li key={rule} className={styles.ruleItem}>
+              <span className={styles.ruleNumber}>{idx + 1}</span>
+              <span className={styles.ruleText}>{rule}</span>
+            </li>
+          ))}
+        </ol>
       </div>
-      <ol className={styles.rulesList}>
-        {words.rules.map((rule, idx) => (
-          <li key={rule} className={styles.ruleItem}>
-            <span className={styles.ruleNumber}>{idx + 1}</span>
-            <span className={styles.ruleText}>{rule}</span>
-          </li>
-        ))}
-      </ol>
+
+      <div className={styles.rulesTip}>
+        <div className={styles.rulesTipTitle}>💡 Strategy Tip</div>
+        <span>
+          Look for pairs of the same colour — the adjacent square must be the opposite colour.
+        </span>
+      </div>
     </aside>
   );
 }

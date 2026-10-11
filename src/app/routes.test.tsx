@@ -22,10 +22,9 @@ describe("routes - root and error", () => {
     const badges = screen.getAllByText("Coming Soon");
     expect(badges).toHaveLength(1);
 
-    expect(screen.getByRole("link", { name: "Easy" }).getAttribute("href")).toBe(
-      "/puzzles/colour-binary-0005",
-    );
-    expect(screen.getByRole("link", { name: "Play Daily" })).toBeDefined();
+    const easyLinks = screen.getAllByRole("link", { name: "Easy" });
+    expect(easyLinks[0]?.getAttribute("href")).toBe("/puzzles/colour-binary-0005");
+    expect(easyLinks[1]?.getAttribute("href")).toMatch(/^\/puzzles\/guzzle-000[01]$/u);
   });
 
   it("shows the not found page for an unknown route", async () => {
@@ -46,7 +45,7 @@ describe("routes - root and error", () => {
 describe("routes - puzzle pages", () => {
   it("renders the puzzle page for /puzzles/:puzzleId fallback", async () => {
     const router = createMemoryRouter(routes, {
-      initialEntries: ["/puzzles/guzzle"],
+      initialEntries: ["/puzzles/unknown-custom-id"],
     });
 
     render(<RouterProvider router={router} />);

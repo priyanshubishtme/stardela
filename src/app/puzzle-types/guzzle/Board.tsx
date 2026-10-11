@@ -66,35 +66,42 @@ function getCellClass(
 }
 
 /**
- * Letter bank showing available letters to place.
+ * Letter bank showing available letters with remaining count subscripts.
  */
 function GuzzleLetterBank({
   bank,
-  usedBankLetters,
+  cells,
   onBankLetterClick,
 }: {
   bank: readonly string[];
-  usedBankLetters: ReadonlySet<string>;
+  cells: readonly GuzzleCell[];
   onBankLetterClick: (letter: string) => void;
 }) {
+  const uniqueLetters = Array.from(new Set(bank)).toSorted();
+
   return (
     <div className={styles.bank} aria-label="Letter bank">
-      {bank.map((letter) => {
-        const isUsed = usedBankLetters.has(letter);
-        const btnClass = [styles.bankLetter, isUsed ? styles.bankLetterUsed : ""]
-          .filter(Boolean)
-          .join(" ");
+      {uniqueLetters.map((letter) => {
+        const total = bank.filter((c) => c === letter).length;
+        const placed = cells.filter(
+          (c) => c.letter === letter && (c.isLocked || c.result === "correct") && !c.isFixed,
+        ).length;
+        const remaining = Math.max(0, total - placed);
+        const isUsed = remaining === 0;
+        const btnClass = `${styles.bankLetter} ${isUsed ? styles.bankLetterUsed : ""}`.trim();
 
         return (
           <button
             key={`bank-${letter}`}
             type="button"
             className={btnClass}
-            aria-label={`Letter ${letter}${isUsed ? ", placed" : ""}`}
+            aria-label={`Letter ${letter}${isUsed ? ", none remaining" : `, ${remaining} available`}`}
             aria-disabled={isUsed}
+            disabled={isUsed}
             onClick={() => onBankLetterClick(letter)}
           >
-            {letter}
+            <span className={styles.bankChar}>{letter}</span>
+            {remaining > 1 && <sub className={styles.bankCount}>{remaining}</sub>}
           </button>
         );
       })}
@@ -200,7 +207,6 @@ export function GuzzleBoard({
   cells,
   selectedIndex,
   mistakes,
-  usedBankLetters,
   mode,
   onModeChange,
   onCellClick,
@@ -210,12 +216,6 @@ export function GuzzleBoard({
 
   return (
     <div className={styles.boardContainer}>
-      <GuzzleModeSwitcher mode={mode} onModeChange={onModeChange} />
-
-      <p className={styles.mistakes}>
-        Mistakes: <span className={styles.mistakesCount}>{mistakes}</span>
-      </p>
-
       <GuzzleGrid
         puzzle={puzzle}
         cells={cells}
@@ -224,21 +224,19 @@ export function GuzzleBoard({
         onCellClick={onCellClick}
       />
 
-      {mode === "With bank" && (
-        <GuzzleLetterBank
-          bank={puzzle.bank}
-          usedBankLetters={usedBankLetters}
-          onBankLetterClick={onBankLetterClick}
-        />
-      )}
+      <p className={styles.mistakes}>
+        <span className={styles.mistakesCount}>{mistakes}</span> mistake{mistakes === 1 ? "" : "s"}
+      </p>
 
       <p className={`${styles.statusCard} ${solved ? styles.statusSolved : ""}`}>
-        {solved
-          ? `Result: ${mode}, ${mistakes} mistake${mistakes === 1 ? "" : "s"}.`
-          : mode === "With bank"
-            ? "Select a square, then choose a letter from the bank or type on your keyboard."
-            : "Select a square, then type a letter on your keyboard."}
+        {solved ? text.guzzle.status.solved(mode, mistakes) : text.guzzle.status.start}
       </p>
+
+      {mode === "With bank" && (
+        <GuzzleLetterBank bank={puzzle.bank} cells={cells} onBankLetterClick={onBankLetterClick} />
+      )}
+
+      <GuzzleModeSwitcher mode={mode} onModeChange={onModeChange} />
     </div>
   );
 }

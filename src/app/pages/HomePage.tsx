@@ -70,7 +70,13 @@ function ColourBinaryCard({ dailyPuzzles }: { dailyPuzzles: DailyPuzzleSet }) {
  * Card for Guzzle puzzle.
  * Displays title, summary, and links to play the daily challenge or open Guzzle.
  */
-function GuzzleCard({ dailyPuzzleId }: { dailyPuzzleId: string }) {
+function GuzzleCard({ dailyPuzzles }: { dailyPuzzles: DailyPuzzleSet }) {
+  const guzzleDaily: Record<Difficulty, string> = {
+    easy: dailyPuzzles.puzzles.guzzleEasy ?? "guzzle-0000",
+    medium: dailyPuzzles.puzzles.guzzleMedium ?? "guzzle-0005",
+    hard: dailyPuzzles.puzzles.guzzleHard ?? "guzzle-0015",
+  };
+
   return (
     <div className={styles.puzzleCard}>
       <div className={styles.puzzleCardContent}>
@@ -78,12 +84,11 @@ function GuzzleCard({ dailyPuzzleId }: { dailyPuzzleId: string }) {
         <p className={styles.puzzleSummary}>{guzzle.summary}</p>
       </div>
       <div className={styles.difficultyList}>
-        <Link to={`/puzzles/${dailyPuzzleId}`} className={styles.difficultyBtn}>
-          Play Daily
-        </Link>
-        <Link to="/guzzle" className={`${styles.difficultyBtn} ${styles.secondaryBtn}`}>
-          Play
-        </Link>
+        {levels.map(({ key, label }) => (
+          <Link key={key} to={`/puzzles/${guzzleDaily[key]}`} className={styles.difficultyBtn}>
+            {label}
+          </Link>
+        ))}
       </div>
     </div>
   );
@@ -133,12 +138,7 @@ export function HomePage() {
               return <ComingSoonCard key={app.id} title={app.name} summary={app.summary} />;
             }
             if (app.id === "guzzle") {
-              return (
-                <GuzzleCard
-                  key={app.id}
-                  dailyPuzzleId={data.dailyPuzzles.puzzles.guzzle ?? "guzzle-0000"}
-                />
-              );
+              return <GuzzleCard key={app.id} dailyPuzzles={data.dailyPuzzles} />;
             }
             return <ColourBinaryCard key={app.id} dailyPuzzles={data.dailyPuzzles} />;
           })}

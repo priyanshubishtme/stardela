@@ -27,6 +27,9 @@ export interface LoadedPuzzle {
   dailyMediumId: string;
   dailyHardId: string;
   dailyGuzzleId: string;
+  dailyGuzzleEasyId: string;
+  dailyGuzzleMediumId: string;
+  dailyGuzzleHardId: string;
 }
 
 /**
@@ -38,42 +41,43 @@ export function isGuzzlePuzzleId(id?: string): boolean {
   return lower.startsWith("guzzle") || lower.includes("guzzle");
 }
 
-/**
- * Load puzzle data for the current route.
- * Reads the puzzleId from URL parameters or defaults to today's daily puzzle.
- */
-export function puzzleLoader({ params, request }: LoaderFunctionArgs): LoadedPuzzle {
-  const dailySet = getOrGenerateDailyPuzzles();
-  const rawId = params["puzzleId"];
+function createGuzzleRouteData(
+  rawId: string | undefined,
+  dailySet: ReturnType<typeof getOrGenerateDailyPuzzles>,
+): LoadedPuzzle {
+  const gzEasy = dailySet.puzzles.guzzleEasy ?? guzzleExample.id;
+  const gzMed = dailySet.puzzles.guzzleMedium ?? "guzzle-0005";
+  const gzHard = dailySet.puzzles.guzzleHard ?? "guzzle-0015";
+  const isGeneric = !rawId || rawId === "guzzle" || rawId === "daily";
+  const puzzle = findGuzzlePuzzle(isGeneric ? gzEasy : rawId);
+  const isDaily = isGeneric || puzzle.id === gzEasy || puzzle.id === gzMed || puzzle.id === gzHard;
 
-  /* Check whether URL pathname or puzzleId matches Guzzle */
-  const urlPath = request?.url ? new URL(request.url).pathname.toLowerCase() : "";
-  const isGuzzleRoute = isGuzzlePuzzleId(rawId) || urlPath.includes("/guzzle");
+  return {
+    puzzleType: "guzzle",
+    puzzleId: puzzle.id,
+    puzzle,
+    dayNumber: dailySet.dayNumber,
+    isDaily,
+    dailyEasyId: dailySet.puzzles.easy,
+    dailyMediumId: dailySet.puzzles.medium,
+    dailyHardId: dailySet.puzzles.hard,
+    dailyGuzzleId: gzEasy,
+    dailyGuzzleEasyId: gzEasy,
+    dailyGuzzleMediumId: gzMed,
+    dailyGuzzleHardId: gzHard,
+  };
+}
 
-  if (isGuzzleRoute) {
-    const isGeneric = !rawId || rawId === "guzzle" || rawId === "daily";
-    const puzzleId = isGeneric ? (dailySet.puzzles.guzzle ?? guzzleExample.id) : rawId;
-    const puzzle = findGuzzlePuzzle(puzzleId);
-    const isDaily = isGeneric || puzzle.id === dailySet.puzzles.guzzle;
-
-    return {
-      puzzleType: "guzzle",
-      puzzleId: puzzle.id,
-      puzzle,
-      dayNumber: dailySet.dayNumber,
-      isDaily,
-      dailyEasyId: dailySet.puzzles.easy,
-      dailyMediumId: dailySet.puzzles.medium,
-      dailyHardId: dailySet.puzzles.hard,
-      dailyGuzzleId: dailySet.puzzles.guzzle ?? guzzleExample.id,
-    };
-  }
-
-  /* Otherwise default to Color Binary */
+function createColorBinaryRouteData(
+  rawId: string | undefined,
+  dailySet: ReturnType<typeof getOrGenerateDailyPuzzles>,
+): LoadedPuzzle {
+  const gzEasy = dailySet.puzzles.guzzleEasy ?? guzzleExample.id;
+  const gzMed = dailySet.puzzles.guzzleMedium ?? "guzzle-0005";
+  const gzHard = dailySet.puzzles.guzzleHard ?? "guzzle-0015";
   const isGeneric =
     !rawId || rawId === "daily" || rawId === "color-binary" || rawId === "colour-binary";
-  const puzzleId = isGeneric ? dailySet.puzzles.easy : rawId;
-  const puzzle = findColorBinaryPuzzle(puzzleId);
+  const puzzle = findColorBinaryPuzzle(isGeneric ? dailySet.puzzles.easy : rawId);
   const isDaily =
     puzzle.id === dailySet.puzzles.easy ||
     puzzle.id === dailySet.puzzles.medium ||
@@ -88,6 +92,24 @@ export function puzzleLoader({ params, request }: LoaderFunctionArgs): LoadedPuz
     dailyEasyId: dailySet.puzzles.easy,
     dailyMediumId: dailySet.puzzles.medium,
     dailyHardId: dailySet.puzzles.hard,
-    dailyGuzzleId: dailySet.puzzles.guzzle ?? guzzleExample.id,
+    dailyGuzzleId: gzEasy,
+    dailyGuzzleEasyId: gzEasy,
+    dailyGuzzleMediumId: gzMed,
+    dailyGuzzleHardId: gzHard,
   };
+}
+
+/**
+ * Load puzzle data for the current route.
+ * Reads the puzzleId from URL parameters or defaults to today's daily puzzle.
+ */
+export function puzzleLoader({ params, request }: LoaderFunctionArgs): LoadedPuzzle {
+  const dailySet = getOrGenerateDailyPuzzles();
+  const rawId = params["puzzleId"];
+  const urlPath = request?.url ? new URL(request.url).pathname.toLowerCase() : "";
+  const isGuzzleRoute = isGuzzlePuzzleId(rawId) || urlPath.includes("/guzzle");
+
+  return isGuzzleRoute
+    ? createGuzzleRouteData(rawId, dailySet)
+    : createColorBinaryRouteData(rawId, dailySet);
 }

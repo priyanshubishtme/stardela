@@ -25,7 +25,6 @@ function RulesCard() {
   return (
     <aside className={styles.rulesCard} aria-labelledby="guzzle-rules-heading">
       <div className={styles.rulesHeader}>
-        <span className={styles.rulesIcon}>📋</span>
         <h2 id="guzzle-rules-heading" className={styles.rulesTitle}>
           RULES
         </h2>
@@ -33,34 +32,12 @@ function RulesCard() {
       <ol className={styles.rulesList}>
         {guzzleRules.map((rule, idx) => (
           <li key={rule} className={styles.ruleItem}>
-            <span className={styles.ruleNumber}>{idx + 1}</span>
+            <span className={styles.ruleNumber}>{idx + 1}.</span>
             <span className={styles.ruleText}>{rule}</span>
           </li>
         ))}
       </ol>
     </aside>
-  );
-}
-
-/**
- * Colour legend explaining green, yellow, red feedback.
- */
-function ColourLegend() {
-  return (
-    <div className={styles.legend}>
-      <span className={styles.legendItem}>
-        <span className={`${styles.legendDot} ${styles.legendCorrect}`} />
-        Correct (✓)
-      </span>
-      <span className={styles.legendItem}>
-        <span className={`${styles.legendDot} ${styles.legendElsewhere}`} />
-        Different square (↔)
-      </span>
-      <span className={styles.legendItem}>
-        <span className={`${styles.legendDot} ${styles.legendAbsent}`} />
-        Not in line (✗)
-      </span>
-    </div>
   );
 }
 
@@ -123,8 +100,6 @@ export default function GuzzleSession({ puzzle }: GuzzleSessionProps) {
       <RulesCard />
 
       <section className={styles.playArea} aria-label={text.guzzle.boardLabel}>
-        <ColourLegend />
-
         <GuzzleBoard
           puzzle={puzzle}
           cells={cells}

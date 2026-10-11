@@ -63,32 +63,40 @@ export function useGuzzleKeyboard(
 }
 
 /**
- * Manage cells, mistakes, and used bank letters state.
+ * Compute the set of fully placed bank letters.
+ */
+function computeUsedBankLetters(
+  bank: readonly string[],
+  cells: readonly GuzzleCell[],
+): Set<string> {
+  const used = new Set<string>();
+  for (const letter of bank) {
+    const total = bank.filter((c) => c === letter).length;
+    const placed = cells.filter(
+      (c) => c.letter === letter && (c.isLocked || c.result === "correct") && !c.isFixed,
+    ).length;
+    if (placed >= total) {
+      used.add(letter);
+    }
+  }
+  return used;
+}
+
+/**
+ * Manage cells, selectedIndex, and mistakes state.
  */
 function useGuzzleBoardState(puzzle: GuzzlePuzzle) {
   const [cells, setCells] = useState<GuzzleCell[]>(() => createInitialCells(puzzle));
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [mistakes, setMistakes] = useState(0);
-  const [usedBankLetters, setUsedBankLetters] = useState<Set<string>>(new Set());
 
   const resetBoard = useCallback(() => {
     setCells(createInitialCells(puzzle));
     setSelectedIndex(null);
     setMistakes(0);
-    setUsedBankLetters(new Set());
   }, [puzzle]);
 
-  return {
-    cells,
-    setCells,
-    selectedIndex,
-    setSelectedIndex,
-    mistakes,
-    setMistakes,
-    usedBankLetters,
-    setUsedBankLetters,
-    resetBoard,
-  };
+  return { cells, setCells, selectedIndex, setSelectedIndex, mistakes, setMistakes, resetBoard };
 }
 
 /**
@@ -118,11 +126,9 @@ function applyPlacement(
 function useLetterPlacement(
   selectedIndex: number | null,
   mode: GuzzleMode,
-  usedBankLetters: Set<string>,
   cells: GuzzleCell[],
   puzzle: GuzzlePuzzle,
   setCells: Dispatch<SetStateAction<GuzzleCell[]>>,
-  setUsedBankLetters: Dispatch<SetStateAction<Set<string>>>,
   setMistakes: Dispatch<SetStateAction<number>>,
   setSelectedIndex: Dispatch<SetStateAction<number | null>>,
 ) {
@@ -130,7 +136,13 @@ function useLetterPlacement(
     (letter: string) => {
       if (selectedIndex === null) return;
       const upper = letter.toUpperCase();
-      if (mode === "With bank" && usedBankLetters.has(upper)) return;
+      if (mode === "With bank") {
+        const total = puzzle.bank.filter((c) => c === upper).length;
+        const placed = cells.filter(
+          (c) => c.letter === upper && (c.isLocked || c.result === "correct") && !c.isFixed,
+        ).length;
+        if (placed >= total) return;
+      }
 
       const cell = cells[selectedIndex];
       if (!cell || cell.isFixed || cell.isLocked) return;
@@ -138,25 +150,13 @@ function useLetterPlacement(
       const { isCorrect, nextCells } = applyPlacement(cells, selectedIndex, upper, puzzle);
       setCells(nextCells);
 
-      if (isCorrect) {
-        setUsedBankLetters((prev) => new Set(prev).add(upper));
-      } else {
+      if (!isCorrect) {
         setMistakes((prev) => prev + 1);
       }
 
       setSelectedIndex(null);
     },
-    [
-      selectedIndex,
-      mode,
-      usedBankLetters,
-      cells,
-      puzzle,
-      setCells,
-      setUsedBankLetters,
-      setMistakes,
-      setSelectedIndex,
-    ],
+    [selectedIndex, mode, cells, puzzle, setCells, setMistakes, setSelectedIndex],
   );
 }
 
@@ -198,28 +198,18 @@ function useCellActions(
  * Custom hook to manage the Guzzle game state and user interactions.
  */
 export function useGuzzleSession(puzzle: GuzzlePuzzle) {
-  const {
-    cells,
-    setCells,
-    selectedIndex,
-    setSelectedIndex,
-    mistakes,
-    setMistakes,
-    usedBankLetters,
-    setUsedBankLetters,
-    resetBoard,
-  } = useGuzzleBoardState(puzzle);
+  const { cells, setCells, selectedIndex, setSelectedIndex, mistakes, setMistakes, resetBoard } =
+    useGuzzleBoardState(puzzle);
 
   const [mode, setMode] = useState<GuzzleMode>("With bank");
+  const usedBankLetters = computeUsedBankLetters(puzzle.bank, cells);
 
   const placeLetter = useLetterPlacement(
     selectedIndex,
     mode,
-    usedBankLetters,
     cells,
     puzzle,
     setCells,
-    setUsedBankLetters,
     setMistakes,
     setSelectedIndex,
   );

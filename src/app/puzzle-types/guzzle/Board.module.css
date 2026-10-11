@@ -11,18 +11,15 @@
   grid-template-columns: repeat(var(--size), minmax(0, 1fr));
   gap: clamp(0.35rem, 1.2vw, 0.6rem);
   width: 100%;
-  max-width: min(90vw, calc(var(--size) * 5rem));
+  max-width: min(90vw, calc(var(--size) * 4.5rem));
   aspect-ratio: 1;
-  padding: clamp(0.5rem, 1.5vw, 0.85rem);
-  background-color: var(--surface);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  transition: border-color 200ms ease;
+  padding: 0;
+  background-color: transparent;
+  border: none;
 }
 
 .boardSolved {
-  border-color: var(--result-correct);
+  border-color: transparent;
 }
 
 /* --- Cell styles --- */
@@ -108,21 +105,34 @@
 
 /* Empty cells that are not on any word line (corner cells not used). */
 .cellInert {
-  background-color: transparent;
-  border-color: transparent;
-  cursor: default;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* --- Mistake counter --- */
+
+.mistakes {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0;
+  text-align: center;
+}
+
+.mistakesCount {
+  font-weight: 700;
 }
 
 /* --- Status messages --- */
 
 .statusCard {
   text-align: center;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
-  max-width: 480px;
-  line-height: 1.5;
-  padding: 0.65rem 1rem;
-  border-radius: var(--radius-md);
+  max-width: 500px;
+  line-height: 1.4;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
   background-color: var(--code-bg);
   border: 1px solid var(--border);
   margin: 0;
@@ -140,50 +150,53 @@
 .bank {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.45rem;
   justify-content: center;
-  max-width: 400px;
+  max-width: 520px;
 }
 
 .bankLetter {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: var(--radius-md);
+  min-width: 2.35rem;
+  height: 2.35rem;
+  padding: 0 0.4rem;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  background-color: var(--surface);
-  font-size: 1.1rem;
+  background-color: var(--code-bg);
+  font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
+  color: var(--text-h);
   cursor: pointer;
   transition:
     background-color 150ms ease,
     border-color 150ms ease;
+  user-select: none;
 }
 
-.bankLetter:hover {
-  background-color: var(--accent-bg);
-  border-color: var(--accent-border);
+.bankLetter:hover:not(:disabled) {
+  background-color: var(--surface);
+  border-color: var(--line);
 }
 
 .bankLetterUsed {
-  opacity: 0.35;
+  opacity: 0.3;
   cursor: default;
 }
 
-/* --- Mistake counter --- */
-
-.mistakes {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-muted);
+.bankChar {
+  line-height: 1;
 }
 
-.mistakesCount {
-  color: var(--result-absent);
-  font-weight: 700;
+.bankCount {
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin-left: 0.15rem;
+  bottom: -0.2em;
+  color: var(--text-muted);
 }
 
 /* --- Mode Switcher ("With bank" vs "Without bank") --- */

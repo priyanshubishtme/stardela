@@ -102,15 +102,15 @@ const guzzle = {
   summary: "Find four words that cross at one letter. The colors tell you where each letter goes.",
   rules: [
     "Four words cross at the center letter: across, down and two diagonals.",
-    "All words have the same length.",
+    "All words have the same length. The diagonals read from left to right.",
     "Put a letter in a square.",
-    "Green: the letter is correct.",
-    "Yellow: this line has the letter in a different square.",
-    "Red: this line does not have the letter.",
+    "✅ Green: the letter is correct.",
+    "↔️ Yellow: this word has the letter in a different square.",
+    "❌ Red: this word does not have the letter.",
     "Make all squares green with the fewest mistakes.",
   ],
   status: {
-    start: "Select a square, then choose a letter from the bank or type on your keyboard.",
+    start: "Select a square. Then type a letter or select a letter.",
     solved: (mode: string, mistakes: number) =>
       `${mode}, ${mistakes} mistake${mistakes === 1 ? "" : "s"}.`,
   },

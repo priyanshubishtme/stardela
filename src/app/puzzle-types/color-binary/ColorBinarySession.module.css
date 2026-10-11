@@ -4,13 +4,13 @@
   gap: 1.5rem;
   width: 100%;
   margin-top: 0.5rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 @media (min-width: 840px) {
   .layout {
-    grid-template-columns: minmax(240px, 280px) 1fr;
-    gap: 2rem;
+    grid-template-columns: minmax(260px, 300px) 1fr;
+    gap: 2.25rem;
   }
 }
 
@@ -20,8 +20,12 @@
   background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 1.25rem;
+  padding: 1.5rem;
   box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .rulesHeader {
@@ -174,4 +178,23 @@
 
 .ruleStatus {
   margin-top: 0.5rem;
+}
+
+/* --- Rules tip box --- */
+
+.rulesTip {
+  margin-top: 1.5rem;
+  padding: 0.85rem 1rem;
+  background-color: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.rulesTipTitle {
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.25rem;
 }

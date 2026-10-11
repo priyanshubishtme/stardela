@@ -34,6 +34,9 @@ export interface DailyPuzzleSet {
     medium: string;
     hard: string;
     guzzle: string;
+    guzzleEasy?: string;
+    guzzleMedium?: string;
+    guzzleHard?: string;
   };
 }
 
@@ -160,6 +163,14 @@ export function createDailyPuzzleSet(date: Date = new Date()): DailyPuzzleSet {
   const mediumList = colorBinaryPuzzles.filter((p) => p.difficulty === "medium");
   const hardList = colorBinaryPuzzles.filter((p) => p.difficulty === "hard");
 
+  const gzEasyList = guzzlePuzzles.filter((p) => p.difficulty === "easy");
+  const gzMedList = guzzlePuzzles.filter((p) => p.difficulty === "medium");
+  const gzHardList = guzzlePuzzles.filter((p) => p.difficulty === "hard");
+
+  const guzzleEasyId = pickDailyPuzzleId(gzEasyList, dayNumber, guzzleExample.id);
+  const guzzleMedId = pickDailyPuzzleId(gzMedList, dayNumber, "guzzle-0005");
+  const guzzleHardId = pickDailyPuzzleId(gzHardList, dayNumber, "guzzle-0015");
+
   return {
     dayNumber,
     date: dateStr,
@@ -167,7 +178,10 @@ export function createDailyPuzzleSet(date: Date = new Date()): DailyPuzzleSet {
       easy: defaultColorBinaryPuzzle.id,
       medium: pickDailyPuzzleId(mediumList, dayNumber, mediumColorBinaryPuzzle.id),
       hard: pickDailyPuzzleId(hardList, dayNumber, hardColorBinaryPuzzle.id),
-      guzzle: pickDailyPuzzleId(guzzlePuzzles, dayNumber, guzzleExample.id),
+      guzzle: guzzleEasyId,
+      guzzleEasy: guzzleEasyId,
+      guzzleMedium: guzzleMedId,
+      guzzleHard: guzzleHardId,
     },
   };
 }
@@ -186,11 +200,20 @@ export function getDailyPuzzle(
 }
 
 /**
- * Get daily Guzzle puzzle for the given date.
+ * Get daily Guzzle puzzle for the given difficulty level and date.
  */
-export function getDailyGuzzlePuzzle(date: Date = new Date()): GuzzlePuzzle {
+export function getDailyGuzzlePuzzle(
+  difficulty: Difficulty = "easy",
+  date: Date = new Date(),
+): GuzzlePuzzle {
   const set = getOrGenerateDailyPuzzles(date);
-  return findGuzzlePuzzle(set.puzzles.guzzle);
+  const id =
+    difficulty === "medium"
+      ? set.puzzles.guzzleMedium
+      : difficulty === "hard"
+        ? set.puzzles.guzzleHard
+        : set.puzzles.guzzleEasy;
+  return findGuzzlePuzzle(id ?? set.puzzles.guzzle);
 }
 
 /**
@@ -201,10 +224,10 @@ export function getOrGenerateDailyPuzzles(date: Date = new Date()): DailyPuzzleS
   const dayNumber = getDayNumber(date);
   const stored = getStoredDailyPuzzles();
   if (stored && stored.dayNumber === dayNumber) {
-    /* If cached set was saved without a guzzle puzzle, migrate it */
-    if (!stored.puzzles.guzzle) {
-      stored.puzzles.guzzle = pickDailyPuzzleId(guzzlePuzzles, dayNumber, guzzleExample.id);
-      saveDailyPuzzles(stored);
+    if (!stored.puzzles.guzzle || !stored.puzzles.guzzleEasy) {
+      const fresh = createDailyPuzzleSet(date);
+      saveDailyPuzzles(fresh);
+      return fresh;
     }
     return stored;
   }

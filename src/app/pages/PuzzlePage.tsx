@@ -33,24 +33,30 @@ const LEVEL_TABS: LevelTab[] = [
   { key: "hard", label: "Hard", size: "8×8" },
 ];
 
+const GUZZLE_TABS: LevelTab[] = [
+  { key: "easy", label: "Easy", size: "3×3" },
+  { key: "medium", label: "Medium", size: "5×5" },
+  { key: "hard", label: "Hard", size: "7×7" },
+];
+
 /**
  * Difficulty switcher tabs allowing fast level switching on the daily challenge.
  */
 function DifficultySwitcher({
   currentDifficulty,
   dailyPuzzles,
+  tabs = LEVEL_TABS,
 }: {
   currentDifficulty: Difficulty;
   dailyPuzzles?: { easy: string; medium: string; hard: string };
+  tabs?: LevelTab[];
 }) {
   return (
     <nav className={styles.difficultyTabs} aria-label="Difficulty levels">
-      {LEVEL_TABS.map(({ key, label, size }) => {
+      {tabs.map(({ key, label, size }) => {
         const targetId = dailyPuzzles?.[key] ?? key;
         const isActive = currentDifficulty === key;
-        const tabClass = [styles.diffTab, isActive ? styles.diffTabActive : ""]
-          .filter(Boolean)
-          .join(" ");
+        const tabClass = `${styles.diffTab} ${isActive ? styles.diffTabActive : ""}`.trim();
 
         return (
           <Link
@@ -71,17 +77,22 @@ function DifficultySwitcher({
 /**
  * Header section for Color Binary puzzles with title, daily badges, and level switcher.
  */
+interface HeaderProps<T> {
+  puzzle: T;
+  dayNumber?: number;
+  isDaily?: boolean;
+  dailyPuzzles?: { easy: string; medium: string; hard: string };
+}
+
+/**
+ * Header section for Color Binary puzzles with title, daily badges, and level switcher.
+ */
 function PuzzleHeader({
   puzzle,
   dayNumber,
   isDaily,
   dailyPuzzles,
-}: {
-  puzzle: ColorBinaryPuzzle;
-  dayNumber?: number;
-  isDaily?: boolean;
-  dailyPuzzles?: { easy: string; medium: string; hard: string };
-}) {
+}: HeaderProps<ColorBinaryPuzzle>) {
   return (
     <header className={styles.header}>
       <div className={styles.headerTop}>
@@ -96,24 +107,22 @@ function PuzzleHeader({
       </div>
 
       <h1 className={styles.title}>{words.name}</h1>
-
       <DifficultySwitcher currentDifficulty={puzzle.difficulty} dailyPuzzles={dailyPuzzles} />
     </header>
   );
 }
 
 /**
- * Header section for Guzzle puzzles with title, daily badge, and puzzle ID.
+ * Header section for Guzzle puzzles with title, difficulty badge, and switcher tabs.
  */
 function GuzzlePuzzleHeader({
   puzzle,
   dayNumber,
   isDaily,
-}: {
-  puzzle: GuzzlePuzzle;
-  dayNumber?: number;
-  isDaily?: boolean;
-}) {
+  dailyPuzzles,
+}: HeaderProps<GuzzlePuzzle>) {
+  const shortNum = puzzle.id.replace(/^[a-z]+-/iu, "#");
+
   return (
     <header className={styles.header}>
       <div className={styles.headerTop}>
@@ -123,10 +132,18 @@ function GuzzlePuzzleHeader({
             <span>Day {dayNumber} Daily Challenge</span>
           </div>
         )}
-        <span className={styles.badge}>Type: {text.guzzle.name}</span>
-        <span className={styles.badge}>Puzzle {puzzle.id}</span>
+        <span className={styles.difficultyBadge}>{puzzle.difficulty}</span>
+        <span className={styles.metaDot}>•</span>
+        <span className={styles.badge}>{shortNum}</span>
+        <span className={styles.metaDot}>•</span>
+        <span className={styles.authorBadge}>by {puzzle.author}</span>
       </div>
       <h1 className={styles.title}>{text.guzzle.name}</h1>
+      <DifficultySwitcher
+        currentDifficulty={puzzle.difficulty}
+        dailyPuzzles={dailyPuzzles}
+        tabs={GUZZLE_TABS}
+      />
     </header>
   );
 }
@@ -136,12 +153,10 @@ function GuzzlePuzzleHeader({
  */
 function PuzzleLoading({ size }: { size: number }) {
   const gridStyle = { "--size": size } as CSSProperties & { "--size": number };
-  const cellCount = size * size;
-
   return (
     <output className={styles.loadingArea} aria-live="polite">
       <div className={styles.skeletonGrid} style={gridStyle}>
-        {Array.from({ length: cellCount }, (_, i) => (
+        {Array.from({ length: size * size }, (_, i) => (
           <div key={`skeleton-${i}`} className={styles.skeletonCell} />
         ))}
       </div>
@@ -168,20 +183,17 @@ function FallbackPuzzle({ puzzleId }: { puzzleId?: string }) {
 /**
  * Guzzle puzzle view with header and session.
  */
-function GuzzlePuzzleView({
-  puzzle,
-  dayNumber,
-  isDaily,
-}: {
-  puzzle: GuzzlePuzzle;
-  dayNumber?: number;
-  isDaily?: boolean;
-}) {
+function GuzzlePuzzleView({ puzzle, dayNumber, isDaily, dailyPuzzles }: HeaderProps<GuzzlePuzzle>) {
   return (
     <div className={styles.container}>
       <title>{text.puzzlePage.title(text.guzzle.name)}</title>
       <span className="visually-hidden">Puzzle Page</span>
-      <GuzzlePuzzleHeader puzzle={puzzle} dayNumber={dayNumber} isDaily={isDaily} />
+      <GuzzlePuzzleHeader
+        puzzle={puzzle}
+        dayNumber={dayNumber}
+        isDaily={isDaily}
+        dailyPuzzles={dailyPuzzles}
+      />
       <Suspense fallback={<PuzzleLoading size={puzzle.size} />}>
         <GuzzleSession key={puzzle.id} puzzle={puzzle} />
       </Suspense>
@@ -197,12 +209,7 @@ function ColorBinaryPuzzleView({
   dayNumber,
   isDaily,
   dailyPuzzles,
-}: {
-  puzzle: ColorBinaryPuzzle;
-  dayNumber?: number;
-  isDaily?: boolean;
-  dailyPuzzles?: { easy: string; medium: string; hard: string };
-}) {
+}: HeaderProps<ColorBinaryPuzzle>) {
   const size = sizes[puzzle.difficulty];
   return (
     <div className={styles.container}>
@@ -225,16 +232,12 @@ function ColorBinaryPuzzleView({
  * Resolve puzzle object and daily IDs for Color Binary.
  */
 function resolveColorBinaryData(loaderData?: LoadedPuzzle, puzzleId?: string) {
-  const isColorBinary =
+  const isCb =
     !puzzleId ||
     loaderData?.puzzleType === "color-binary" ||
-    puzzleId.toLowerCase().includes("color-binary") ||
-    puzzleId.toLowerCase().includes("colour-binary") ||
+    puzzleId.toLowerCase().includes("binary") ||
     puzzleId === "daily";
-
-  if (!isColorBinary && !loaderData) {
-    return null;
-  }
+  if (!isCb && !loaderData) return null;
 
   const puzzle =
     loaderData?.puzzleType === "color-binary"
@@ -255,32 +258,36 @@ function resolveColorBinaryData(loaderData?: LoadedPuzzle, puzzleId?: string) {
 /**
  * Top-level puzzle page.
  * Resolves current puzzle from route loader and renders with Suspense protection.
- * Supports Color Binary, Guzzle, and fallback views.
  */
 export function PuzzlePage() {
   const loaderData = useLoaderData<LoadedPuzzle>();
   const { puzzleId: paramPuzzleId } = useParams<{ puzzleId: string }>();
   const puzzleId = loaderData?.puzzleId ?? paramPuzzleId;
 
-  const isGuzzle = loaderData?.puzzleType === "guzzle" || isGuzzlePuzzleId(puzzleId);
-  if (isGuzzle) {
+  if (loaderData?.puzzleType === "guzzle" || isGuzzlePuzzleId(puzzleId)) {
     const puzzle =
       loaderData?.puzzleType === "guzzle"
         ? (loaderData.puzzle as GuzzlePuzzle)
         : findGuzzlePuzzle(puzzleId);
+    const dailyPuzzles = loaderData
+      ? {
+          easy: loaderData.dailyGuzzleEasyId,
+          medium: loaderData.dailyGuzzleMediumId,
+          hard: loaderData.dailyGuzzleHardId,
+        }
+      : undefined;
     return (
       <GuzzlePuzzleView
         puzzle={puzzle}
         dayNumber={loaderData?.dayNumber}
         isDaily={loaderData?.isDaily}
+        dailyPuzzles={dailyPuzzles}
       />
     );
   }
 
   const cbData = resolveColorBinaryData(loaderData, puzzleId);
-  if (!cbData) {
-    return <FallbackPuzzle puzzleId={puzzleId} />;
-  }
+  if (!cbData) return <FallbackPuzzle puzzleId={puzzleId} />;
 
   return (
     <ColorBinaryPuzzleView

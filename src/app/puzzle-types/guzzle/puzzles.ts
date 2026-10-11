@@ -4,6 +4,8 @@
  * across, down, and two diagonals. All words have the same length.
  */
 
+import type { Difficulty } from "../../../shared/difficulty";
+
 /**
  * Result of placing a letter in a square.
  * "correct" = green: the letter is in the right place.
@@ -32,23 +34,28 @@ export interface GuzzleCell {
 export interface GuzzlePuzzle {
   readonly id: string;
   readonly type: "guzzle";
+  readonly difficulty: Difficulty;
   readonly size: number;
   readonly center: string;
   readonly words: {
-    /** Word reading left-to-right across the centre row. */
     readonly across: string;
-    /** Word reading top-to-bottom down the centre column. */
     readonly down: string;
-    /** Word reading top-left to bottom-right. */
     readonly diagTLBR: string;
-    /** Word reading bottom-left to top-right (read left-to-right). */
     readonly diagBLTR: string;
   };
-  /** Bank of available letters (all letters except the fixed centre). */
   readonly bank: readonly string[];
   readonly author: string;
   readonly license: "CC-BY-4.0";
 }
+
+/**
+ * Board dimensions for each Guzzle difficulty level.
+ */
+export const guzzleSizes: Record<Difficulty, number> = {
+  easy: 3,
+  medium: 5,
+  hard: 7,
+};
 
 /**
  * Lines that pass through each cell.
@@ -61,23 +68,16 @@ export type LineId = "across" | "down" | "diagTLBR" | "diagBLTR";
  */
 export function getLineIndices(size: number): Record<LineId, number[]> {
   const mid = Math.floor(size / 2);
-
-  /* Across: the middle row, left to right. */
   const across: number[] = [];
-  for (let c = 0; c < size; c++) across.push(mid * size + c);
-
-  /* Down: the middle column, top to bottom. */
   const down: number[] = [];
-  for (let r = 0; r < size; r++) down.push(r * size + mid);
-
-  /* Diagonal top-left to bottom-right. */
   const diagTLBR: number[] = [];
-  for (let i = 0; i < size; i++) diagTLBR.push(i * size + i);
-
-  /* Diagonal bottom-left to top-right (read left to right). */
   const diagBLTR: number[] = [];
-  for (let i = 0; i < size; i++) diagBLTR.push((size - 1 - i) * size + i);
-
+  for (let i = 0; i < size; i++) {
+    across.push(mid * size + i);
+    down.push(i * size + mid);
+    diagTLBR.push(i * size + i);
+    diagBLTR.push((size - 1 - i) * size + i);
+  }
   return { across, down, diagTLBR, diagBLTR };
 }
 
@@ -203,39 +203,61 @@ export function getExpectedLetter(cellIndex: number, puzzle: GuzzlePuzzle): stri
 /* --- Example puzzle from rules.md --- */
 
 /**
- * Example 3×3 Guzzle puzzle: CAT, BAG, RAN, MAP.
+ * Easy 3×3 Guzzle puzzle (Set 1).
  */
 export const guzzleExample: GuzzlePuzzle = {
   id: "guzzle-0000",
   type: "guzzle",
+  difficulty: "easy",
   size: 3,
   center: "A",
-  words: {
-    across: "CAT",
-    down: "BAG",
-    diagTLBR: "RAN",
-    diagBLTR: "MAP",
-  },
-  bank: ["B", "C", "G", "M", "N", "P", "R", "T"],
+  words: { across: "CAT", down: "BAG", diagTLBR: "RAN", diagBLTR: "MAP" },
+  bank: [..."BCGMNPRT"],
   author: "skardela",
   license: "CC-BY-4.0",
 };
 
 /**
- * Additional 3×3 Guzzle puzzle: TIP, WIN, RIM, SIX.
+ * Easy 3×3 Guzzle puzzle (Set 2).
  */
 export const guzzle0001: GuzzlePuzzle = {
   id: "guzzle-0001",
   type: "guzzle",
+  difficulty: "easy",
   size: 3,
   center: "I",
-  words: {
-    across: "TIP",
-    down: "WIN",
-    diagTLBR: "RIM",
-    diagBLTR: "SIX",
-  },
-  bank: ["M", "N", "P", "R", "S", "T", "W", "X"],
+  words: { across: "TIP", down: "WIN", diagTLBR: "RIM", diagBLTR: "SIX" },
+  bank: [..."MNPRSTWX"],
+  author: "skardela",
+  license: "CC-BY-4.0",
+};
+
+/**
+ * Medium 5×5 Guzzle puzzle.
+ */
+export const guzzle0005: GuzzlePuzzle = {
+  id: "guzzle-0005",
+  type: "guzzle",
+  difficulty: "medium",
+  size: 5,
+  center: "A",
+  words: { across: "TRAIN", down: "CRANE", diagTLBR: "FRAME", diagBLTR: "SPARE" },
+  bank: [..."CEEEFIMNNPRRRRST"],
+  author: "skardela",
+  license: "CC-BY-4.0",
+};
+
+/**
+ * Hard 7×7 Guzzle puzzle.
+ */
+export const guzzle0015: GuzzlePuzzle = {
+  id: "guzzle-0015",
+  type: "guzzle",
+  difficulty: "hard",
+  size: 7,
+  center: "U",
+  words: { across: "MINUTES", down: "FIGURES", diagTLBR: "NATURAL", diagBLTR: "VOLUMES" },
+  bank: [..."AAEEEFGIILMMNNORRSSSTTV"],
   author: "skardela",
   license: "CC-BY-4.0",
 };
@@ -243,14 +265,19 @@ export const guzzle0001: GuzzlePuzzle = {
 /**
  * List of all available Guzzle puzzles.
  */
-export const guzzlePuzzles: GuzzlePuzzle[] = [guzzleExample, guzzle0001];
+export const guzzlePuzzles: GuzzlePuzzle[] = [guzzleExample, guzzle0001, guzzle0005, guzzle0015];
 
 /**
- * Find a Guzzle puzzle by identifier.
- * Returns the matched puzzle or the example puzzle.
+ * Find a Guzzle puzzle by identifier or difficulty keyword.
  */
 export function findGuzzlePuzzle(id?: string): GuzzlePuzzle {
   if (!id) return guzzleExample;
-  const found = guzzlePuzzles.find((p) => p.id.toLowerCase() === id.toLowerCase());
+  const lower = id.toLowerCase();
+  const found = guzzlePuzzles.find(
+    (p) =>
+      p.id.toLowerCase() === lower ||
+      lower.includes(p.difficulty) ||
+      (lower === "daily" && p.difficulty === "easy"),
+  );
   return found ?? guzzleExample;
 }
