@@ -95,6 +95,65 @@ const colorBinary = {
 };
 
 /**
+ * English vocabulary, instructions, and messages for Guzzle.
+ */
+const guzzle = {
+  name: "Guzzle",
+  summary:
+    "Find four words that cross at one letter. The colors tell you where each letter goes.",
+  rules: [
+    "Four words cross at the center letter: across, down and two diagonals.",
+    "All words have the same length.",
+    "Put a letter in a square.",
+    "Green: the letter is correct.",
+    "Yellow: this line has the letter in a different square.",
+    "Red: this line does not have the letter.",
+    "Make all squares green with the fewest mistakes.",
+  ],
+  status: {
+    start: "Select a square, then choose a letter from the bank or type on your keyboard.",
+    solved: (mode: string, mistakes: number) =>
+      `${mode}, ${mistakes} mistake${mistakes === 1 ? "" : "s"}.`,
+  },
+  mode: {
+    withBank: "With bank",
+    withoutBank: "Without bank",
+    withBankLabel: "Play with letter bank",
+    withoutBankLabel: "Play without letter bank (free typing)",
+  },
+  mistakes: (count: number) => `Mistakes: ${count}`,
+  resetButton: "Reset",
+  boardLabel: "Guzzle Board",
+  symbols: {
+    correct: "✓",
+    elsewhere: "↔",
+    absent: "✗",
+  },
+  colors: {
+    green: "green",
+    yellow: "yellow",
+    red: "red",
+  },
+  results: {
+    correct: "correct",
+    elsewhere: "different square in line",
+    absent: "not in line",
+  },
+  cellAria: (
+    row: number,
+    col: number,
+    letter?: string | null,
+    result?: string | null,
+    isFixed?: boolean,
+  ) => {
+    const fixedStr = isFixed ? ", center fixed letter" : "";
+    const letterStr = letter ? `, letter ${letter}` : ", empty";
+    const resultStr = result ? `, ${result}` : "";
+    return `Row ${row}, Column ${col}${letterStr}${resultStr}${fixedStr}`;
+  },
+};
+
+/**
  * Main localization catalog for English.
  */
 export const text = {
@@ -110,6 +169,7 @@ export const text = {
   },
   "color-binary": colorBinary,
   "colour-binary": colorBinary,
+  guzzle,
   footer: {
     content: "© 2026 Skardela. All rights reserved.",
   },
@@ -119,3 +179,4 @@ export const text = {
     homeLink: "Go to the home page",
   },
 };
+

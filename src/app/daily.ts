@@ -6,6 +6,12 @@ import {
   mediumColorBinaryPuzzle,
   type ColorBinaryPuzzle,
 } from "./puzzle-types/color-binary/puzzles";
+import {
+  findGuzzlePuzzle,
+  guzzleExample,
+  guzzlePuzzles,
+  type GuzzlePuzzle,
+} from "./puzzle-types/guzzle/puzzles";
 
 /**
  * Start date used to calculate the daily puzzle number.
@@ -27,6 +33,7 @@ export interface DailyPuzzleSet {
     easy: string;
     medium: string;
     hard: string;
+    guzzle: string;
   };
 }
 
@@ -55,7 +62,7 @@ export const puzzleApps: PuzzleAppInfo[] = [
     name: "Guzzle",
     summary:
       "Find four words that cross at one letter. The colors tell you where each letter goes.",
-    isAvailable: false,
+    isAvailable: true,
   },
   {
     id: "lanterns",
@@ -131,11 +138,15 @@ export function saveDailyPuzzles(data: DailyPuzzleSet): void {
 }
 
 /**
- * Helper to pick a random puzzle ID from a list.
+ * Pick a daily puzzle ID deterministically based on day number.
  */
-function pickRandomPuzzleId(list: ColorBinaryPuzzle[], fallbackId: string): string {
+function pickDailyPuzzleId<T extends { id: string }>(
+  list: readonly T[],
+  dayNumber: number,
+  fallbackId: string,
+): string {
   if (list.length === 0) return fallbackId;
-  const idx = Math.floor(Math.random() * list.length);
+  const idx = Math.abs(dayNumber - 1) % list.length;
   return list[idx]?.id ?? fallbackId;
 }
 
@@ -146,7 +157,6 @@ export function createDailyPuzzleSet(date: Date = new Date()): DailyPuzzleSet {
   const dayNumber = getDayNumber(date);
   const dateStr = getTodayDateString(date);
 
-  const easyList = colorBinaryPuzzles.filter((p) => p.difficulty === "easy");
   const mediumList = colorBinaryPuzzles.filter((p) => p.difficulty === "medium");
   const hardList = colorBinaryPuzzles.filter((p) => p.difficulty === "hard");
 
@@ -154,11 +164,33 @@ export function createDailyPuzzleSet(date: Date = new Date()): DailyPuzzleSet {
     dayNumber,
     date: dateStr,
     puzzles: {
-      easy: pickRandomPuzzleId(easyList, defaultColorBinaryPuzzle.id),
-      medium: pickRandomPuzzleId(mediumList, mediumColorBinaryPuzzle.id),
-      hard: pickRandomPuzzleId(hardList, hardColorBinaryPuzzle.id),
+      easy: defaultColorBinaryPuzzle.id,
+      medium: pickDailyPuzzleId(mediumList, dayNumber, mediumColorBinaryPuzzle.id),
+      hard: pickDailyPuzzleId(hardList, dayNumber, hardColorBinaryPuzzle.id),
+      guzzle: pickDailyPuzzleId(guzzlePuzzles, dayNumber, guzzleExample.id),
     },
   };
+}
+
+/**
+ * Get daily puzzle for a specific difficulty level.
+ */
+export function getDailyPuzzle(
+  difficulty: Difficulty = "easy",
+  date: Date = new Date(),
+): ColorBinaryPuzzle {
+  const set = getOrGenerateDailyPuzzles(date);
+  const puzzleId = set.puzzles[difficulty];
+  const found = colorBinaryPuzzles.find((p) => p.id === puzzleId);
+  return found ?? defaultColorBinaryPuzzle;
+}
+
+/**
+ * Get daily Guzzle puzzle for the given date.
+ */
+export function getDailyGuzzlePuzzle(date: Date = new Date()): GuzzlePuzzle {
+  const set = getOrGenerateDailyPuzzles(date);
+  return findGuzzlePuzzle(set.puzzles.guzzle);
 }
 
 /**
@@ -169,6 +201,11 @@ export function getOrGenerateDailyPuzzles(date: Date = new Date()): DailyPuzzleS
   const dayNumber = getDayNumber(date);
   const stored = getStoredDailyPuzzles();
   if (stored && stored.dayNumber === dayNumber) {
+    /* If cached set was saved without a guzzle puzzle, migrate it */
+    if (!stored.puzzles.guzzle) {
+      stored.puzzles.guzzle = pickDailyPuzzleId(guzzlePuzzles, dayNumber, guzzleExample.id);
+      saveDailyPuzzles(stored);
+    }
     return stored;
   }
   const fresh = createDailyPuzzleSet(date);

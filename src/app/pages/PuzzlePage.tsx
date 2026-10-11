@@ -1,146 +1,153 @@
-import { Suspense, useState } from "react";
-import { useLoaderData, useParams } from "react-router";
+/**
+ * Puzzle Page component.
+ * Host playable puzzles with daily challenge headers, difficulty switching, and lazy loading.
+ * Support both Color Binary and Guzzle puzzle types.
+ */
+
+import { Suspense, type CSSProperties } from "react";
+import { Link, useLoaderData, useParams } from "react-router";
+import type { Difficulty } from "../../shared/difficulty";
 import { text } from "../../text/en";
-import type { LoadedPuzzle } from "../Puzzle";
-import { Board } from "../puzzle-types/color-binary/Board";
-import { findHint } from "../puzzle-types/color-binary/hint";
+import { isGuzzlePuzzleId, type LoadedPuzzle } from "../Puzzle";
+import ColorBinarySession from "../puzzle-types/color-binary/ColorBinarySession";
 import {
   findColorBinaryPuzzle,
-  toSquares,
+  sizes,
   type ColorBinaryPuzzle,
-  type Square,
 } from "../puzzle-types/color-binary/puzzles";
+import GuzzleSession from "../puzzle-types/guzzle/GuzzleSession";
+import {
+  findGuzzlePuzzle,
+  type GuzzlePuzzle,
+} from "../puzzle-types/guzzle/puzzles";
 import styles from "./PuzzlePage.module.css";
 
 const words = text["color-binary"];
 
+interface LevelTab {
+  key: Difficulty;
+  label: string;
+  size: string;
+}
+
+const LEVEL_TABS: LevelTab[] = [
+  { key: "easy", label: "Easy", size: "4×4" },
+  { key: "medium", label: "Medium", size: "6×6" },
+  { key: "hard", label: "Hard", size: "8×8" },
+];
+
 /**
- * Header section with puzzle name and metadata badges.
+ * Difficulty switcher tabs allowing fast level switching on the daily challenge.
  */
-function PuzzleHeader({ puzzle }: { puzzle: ColorBinaryPuzzle }) {
+function DifficultySwitcher({
+  currentDifficulty,
+  dailyPuzzles,
+}: {
+  currentDifficulty: Difficulty;
+  dailyPuzzles?: { easy: string; medium: string; hard: string };
+}) {
+  return (
+    <nav className={styles.difficultyTabs} aria-label="Difficulty levels">
+      {LEVEL_TABS.map(({ key, label, size }) => {
+        const targetId = dailyPuzzles?.[key] ?? key;
+        const isActive = currentDifficulty === key;
+        const tabClass = [styles.diffTab, isActive ? styles.diffTabActive : ""]
+          .filter(Boolean)
+          .join(" ");
+
+        return (
+          <Link
+            key={key}
+            to={`/puzzles/${targetId}`}
+            className={tabClass}
+            aria-current={isActive ? "page" : undefined}
+          >
+            <span>{label}</span>
+            <span className={styles.diffTabSize}>{size}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+/**
+ * Header section for Color Binary puzzles with title, daily badges, and level switcher.
+ */
+function PuzzleHeader({
+  puzzle,
+  dayNumber,
+  isDaily,
+  dailyPuzzles,
+}: {
+  puzzle: ColorBinaryPuzzle;
+  dayNumber?: number;
+  isDaily?: boolean;
+  dailyPuzzles?: { easy: string; medium: string; hard: string };
+}) {
   return (
     <header className={styles.header}>
-      <h1 className={styles.title}>{words.name}</h1>
-      <div className={styles.badges}>
+      <div className={styles.headerTop}>
+        {isDaily && dayNumber && (
+          <div className={styles.dayBadge}>
+            <span className={styles.dayBadgeIcon}>🌟</span>
+            <span>Day {dayNumber} Daily Challenge</span>
+          </div>
+        )}
         <span className={styles.badge}>Level: {puzzle.difficulty}</span>
         <span className={styles.badge}>Puzzle {puzzle.id}</span>
-        <span className={styles.badge}>Author: {puzzle.author}</span>
       </div>
+
+      <h1 className={styles.title}>{words.name}</h1>
+
+      <DifficultySwitcher currentDifficulty={puzzle.difficulty} dailyPuzzles={dailyPuzzles} />
     </header>
   );
 }
 
 /**
- * Card explaining the game rules to the player.
+ * Header section for Guzzle puzzles with title, daily badge, and puzzle ID.
  */
-function RulesCard() {
+function GuzzlePuzzleHeader({
+  puzzle,
+  dayNumber,
+  isDaily,
+}: {
+  puzzle: GuzzlePuzzle;
+  dayNumber?: number;
+  isDaily?: boolean;
+}) {
   return (
-    <section className={styles.rulesCard} aria-labelledby="rules-heading">
-      <h2 id="rules-heading" className={styles.rulesTitle}>
-        RULES
-      </h2>
-      <ol className={styles.rulesList}>
-        {words.rules.map((rule) => (
-          <li key={rule}>{rule}</li>
-        ))}
-      </ol>
-    </section>
+    <header className={styles.header}>
+      <div className={styles.headerTop}>
+        {isDaily && dayNumber && (
+          <div className={styles.dayBadge}>
+            <span className={styles.dayBadgeIcon}>🌟</span>
+            <span>Day {dayNumber} Daily Challenge</span>
+          </div>
+        )}
+        <span className={styles.badge}>Type: {text.guzzle.name}</span>
+        <span className={styles.badge}>Puzzle {puzzle.id}</span>
+      </div>
+      <h1 className={styles.title}>{text.guzzle.name}</h1>
+    </header>
   );
 }
 
 /**
- * Props for the HintControl component.
+ * Animated skeleton loading state during React Suspense.
  */
-interface HintControlProps {
-  onHint: () => void;
-  message: string | null;
-}
+function PuzzleLoading({ size }: { size: number }) {
+  const gridStyle = { "--size": size } as CSSProperties & { "--size": number };
+  const cellCount = size * size;
 
-/**
- * Hint button and message container.
- */
-function HintControl({ onHint, message }: HintControlProps) {
-  return (
-    <>
-      <button type="button" className={styles.hintBtn} onClick={onHint}>
-        {words.hintButton}
-      </button>
-      {message && <p className={styles.hintMessage}>{message}</p>}
-    </>
-  );
-}
-
-/**
- * Playable Color Binary game session.
- * Manages board squares, cell clicks, and hint highlighting.
- */
-function ColorBinaryGame({ puzzle }: { puzzle: ColorBinaryPuzzle }) {
-  const [squares, setSquares] = useState<Square[]>(() => toSquares(puzzle.start));
-  const [hintMessage, setHintMessage] = useState<string | null>(null);
-  const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
-
-  const handleSquareClick = (index: number) => {
-    const startSquares = toSquares(puzzle.start);
-    if (startSquares[index] !== ".") return;
-
-    setSquares((prev) => {
-      const next = [...prev];
-      const cur = next[index] ?? ".";
-      next[index] = cur === "." ? "R" : cur === "R" ? "B" : ".";
-      return next;
-    });
-    setHintMessage(null);
-    setHighlightIndex(null);
-  };
-
-  const handleHint = () => {
-    const found = findHint(squares);
-    if (found) {
-      const size = Math.sqrt(squares.length);
-      setHintMessage(words.hint(found));
-      setHighlightIndex((found.row - 1) * size + (found.column - 1));
-    } else {
-      setHintMessage(words.noHint);
-      setHighlightIndex(null);
-    }
-  };
-
-  return (
-    <div className={styles.gameLayout}>
-      <RulesCard />
-
-      <section className={styles.boardArea} aria-label={words.boardLabel}>
-        <Board
-          puzzle={puzzle}
-          squares={squares}
-          highlightIndex={highlightIndex}
-          onSquareClick={handleSquareClick}
-        />
-        <HintControl onHint={handleHint} message={hintMessage} />
-      </section>
-    </div>
-  );
-}
-
-/**
- * Fallback page for non-Color-Binary puzzle IDs.
- */
-function FallbackPuzzle({ puzzleId }: { puzzleId?: string }) {
-  return (
-    <div className={styles.container}>
-      <title>{text.puzzlePage.title(puzzleId ?? "Puzzle")}</title>
-      <h1>{puzzleId ?? "Puzzle"}</h1>
-      <p>Puzzle Page</p>
-    </div>
-  );
-}
-
-/**
- * Loading fallback rendered during React Suspense.
- */
-function PuzzleLoading() {
   return (
     <output className={styles.loadingArea} aria-live="polite">
+      <div className={styles.skeletonGrid} style={gridStyle}>
+        {Array.from({ length: cellCount }, (_, i) => (
+          <div key={`skeleton-${i}`} className={styles.skeletonCell} />
+        ))}
+      </div>
       <div className={styles.loadingSpinner} />
       <p className={styles.loadingText}>{text.puzzlePage.loading}</p>
     </output>
@@ -148,32 +155,93 @@ function PuzzleLoading() {
 }
 
 /**
+ * Fallback page for unknown puzzle IDs.
+ */
+function FallbackPuzzle({ puzzleId }: { puzzleId?: string }) {
+  return (
+    <div className={styles.container}>
+      <title>{text.puzzlePage.title(puzzleId ?? "Puzzle")}</title>
+      <span className="visually-hidden">Puzzle Page</span>
+      <h1>{puzzleId ?? "Puzzle"}</h1>
+      <p>Puzzle Page</p>
+    </div>
+  );
+}
+
+/**
  * Top-level puzzle page.
  * Resolves current puzzle from route loader and renders with Suspense protection.
+ * Supports Color Binary, Guzzle, and fallback views.
  */
 export function PuzzlePage() {
   const loaderData = useLoaderData<LoadedPuzzle>();
   const { puzzleId: paramPuzzleId } = useParams<{ puzzleId: string }>();
   const puzzleId = loaderData?.puzzleId ?? paramPuzzleId;
 
+  /* Check if this is a Guzzle puzzle */
+  const isGuzzle =
+    loaderData?.puzzleType === "guzzle" ||
+    isGuzzlePuzzleId(puzzleId);
+
+  if (isGuzzle) {
+    const guzzlePuzzle =
+      loaderData?.puzzleType === "guzzle"
+        ? (loaderData.puzzle as GuzzlePuzzle)
+        : findGuzzlePuzzle(puzzleId);
+
+    return (
+      <div className={styles.container}>
+        <title>{text.puzzlePage.title(text.guzzle.name)}</title>
+        <span className="visually-hidden">Puzzle Page</span>
+        <GuzzlePuzzleHeader
+          puzzle={guzzlePuzzle}
+          dayNumber={loaderData?.dayNumber}
+          isDaily={loaderData?.isDaily}
+        />
+        <Suspense fallback={<PuzzleLoading size={guzzlePuzzle.size} />}>
+          <GuzzleSession key={guzzlePuzzle.id} puzzle={guzzlePuzzle} />
+        </Suspense>
+      </div>
+    );
+  }
+
   const isColorBinary =
     !puzzleId ||
+    loaderData?.puzzleType === "color-binary" ||
     puzzleId.toLowerCase().includes("color-binary") ||
-    puzzleId.toLowerCase().includes("colour-binary");
+    puzzleId.toLowerCase().includes("colour-binary") ||
+    puzzleId === "daily";
 
-  if (!isColorBinary) {
+  if (!isColorBinary && !loaderData) {
     return <FallbackPuzzle puzzleId={puzzleId} />;
   }
 
-  const puzzle = loaderData?.puzzle ?? findColorBinaryPuzzle(puzzleId);
+  const puzzle =
+    loaderData?.puzzleType === "color-binary"
+      ? (loaderData.puzzle as ColorBinaryPuzzle)
+      : findColorBinaryPuzzle(puzzleId);
+
+  const size = sizes[puzzle.difficulty];
+  const dailyPuzzles = loaderData
+    ? {
+        easy: loaderData.dailyEasyId,
+        medium: loaderData.dailyMediumId,
+        hard: loaderData.dailyHardId,
+      }
+    : undefined;
 
   return (
     <div className={styles.container}>
       <title>{text.puzzlePage.title(words.name)}</title>
       <span className="visually-hidden">Puzzle Page</span>
-      <PuzzleHeader puzzle={puzzle} />
-      <Suspense fallback={<PuzzleLoading />}>
-        <ColorBinaryGame key={puzzle.id} puzzle={puzzle} />
+      <PuzzleHeader
+        puzzle={puzzle}
+        dayNumber={loaderData?.dayNumber}
+        isDaily={loaderData?.isDaily}
+        dailyPuzzles={dailyPuzzles}
+      />
+      <Suspense fallback={<PuzzleLoading size={size} />}>
+        <ColorBinarySession key={puzzle.id} puzzle={puzzle} />
       </Suspense>
     </div>
   );

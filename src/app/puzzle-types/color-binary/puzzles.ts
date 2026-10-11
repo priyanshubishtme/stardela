@@ -90,12 +90,86 @@ export const hardColorBinaryPuzzle: ColorBinaryPuzzle = {
 };
 
 /**
+ * Easy 4x4 Color Binary puzzle configuration (Set 2).
+ */
+export const easyColorBinaryPuzzle2: ColorBinaryPuzzle = {
+  id: "colour-binary-0008",
+  type: "color-binary",
+  difficulty: "easy",
+  author: "skardela",
+  license: "CC-BY-4.0",
+  start: ["R..B", ".RR.", ".B.R", "B.B."],
+  answer: ["RBRB", "BRRB", "RBBR", "BRBR"],
+};
+
+/**
+ * Easy 4x4 Color Binary puzzle configuration (Set 3).
+ */
+export const easyColorBinaryPuzzle3: ColorBinaryPuzzle = {
+  id: "colour-binary-0009",
+  type: "color-binary",
+  difficulty: "easy",
+  author: "skardela",
+  license: "CC-BY-4.0",
+  start: ["B..R", ".RB.", "..R.", "RB.."],
+  answer: ["BBRR", "RRBB", "BRRB", "RBBR"],
+};
+
+/**
+ * Medium 6x6 Color Binary puzzle configuration (Set 2).
+ */
+export const mediumColorBinaryPuzzle2: ColorBinaryPuzzle = {
+  id: "colour-binary-0010",
+  type: "color-binary",
+  difficulty: "medium",
+  author: "skardela",
+  license: "CC-BY-4.0",
+  start: ["R.B..B", ".B.R..", "..R.B.", "B...R.", ".R.B..", "..B..R"],
+  answer: ["RRBBRB", "BBRRBR", "RBRBBR", "BRBRRB", "BRRBRB", "RBBRBR"],
+};
+
+/**
+ * Hard 8x8 Color Binary puzzle configuration (Set 2).
+ */
+export const hardColorBinaryPuzzle2: ColorBinaryPuzzle = {
+  id: "colour-binary-0011",
+  type: "color-binary",
+  difficulty: "hard",
+  author: "skardela",
+  license: "CC-BY-4.0",
+  start: [
+    "R..B.R..",
+    ".BR...R.",
+    "...BR..R",
+    "B.B..R..",
+    ".R...BB.",
+    "B..R...B",
+    ".R..R..B",
+    "..R..RB.",
+  ],
+  answer: [
+    "RRBBRRBB",
+    "BBRRBBRR",
+    "RBRBRBRB",
+    "BRBRBRBR",
+    "RRBBRBBR",
+    "BBRRBRRB",
+    "BRBRRBRB",
+    "RBRBBRBR",
+  ],
+};
+
+/**
  * List of all available Color Binary puzzles.
  */
 export const colorBinaryPuzzles: ColorBinaryPuzzle[] = [
   defaultColorBinaryPuzzle,
   mediumColorBinaryPuzzle,
   hardColorBinaryPuzzle,
+  easyColorBinaryPuzzle2,
+  easyColorBinaryPuzzle3,
+  mediumColorBinaryPuzzle2,
+  hardColorBinaryPuzzle2,
 ];
 
 /**

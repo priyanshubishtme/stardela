@@ -1,0 +1,159 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  align-items: start;
+}
+
+@media (min-width: 840px) {
+  .layout {
+    grid-template-columns: minmax(240px, 280px) 1fr;
+    gap: 2rem;
+  }
+}
+
+/* --- Rules sidebar --- */
+
+.rulesCard {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.rulesHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.rulesIcon {
+  font-size: 1rem;
+}
+
+.rulesTitle {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.rulesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ruleItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.ruleNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  min-width: 1.35rem;
+  border-radius: 50%;
+  background-color: var(--accent-bg);
+  color: var(--accent-text);
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 0.1rem;
+}
+
+.ruleText {
+  flex: 1;
+}
+
+/* --- Play area --- */
+
+.playArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+/* --- Toolbar --- */
+
+.toolbar {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.resetBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.15rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+  user-select: none;
+  background-color: var(--code-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.resetBtn:hover {
+  background-color: var(--surface);
+  color: var(--text-h);
+  border-color: var(--line);
+}
+
+/* --- Colour legend --- */
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.legendDot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+}
+
+.legendCorrect {
+  background-color: var(--result-correct);
+}
+
+.legendElsewhere {
+  background-color: var(--result-elsewhere);
+}
+
+.legendAbsent {
+  background-color: var(--result-absent);
+}

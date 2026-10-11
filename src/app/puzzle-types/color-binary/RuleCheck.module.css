@@ -1,50 +1,50 @@
 .container {
-  background: var(--surface-2, rgba(255, 255, 255, 0.05));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  margin-top: 1rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem 1rem;
+  margin-top: 0.75rem;
   width: 100%;
   max-width: 420px;
 }
 
 .heading {
-  font-size: 0.85rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--text-muted, #94a3b8);
-  margin: 0 0 0.5rem;
+  color: var(--text-muted);
+  margin: 0 0 0.4rem;
 }
 
 .statusOk {
-  color: #10b981;
+  color: var(--result-correct);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
   margin: 0;
 }
 
 .statusPending {
-  color: #0ea5e9;
+  color: var(--accent-text);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
   margin: 0;
 }
 
 .statusError {
-  color: #ef4444;
+  color: var(--result-absent);
   font-weight: 600;
-  font-size: 0.95rem;
-  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+  margin: 0 0 0.4rem;
 }
 
 .violationsList {
   margin: 0;
   padding-left: 1.25rem;
-  font-size: 0.875rem;
-  color: #f87171;
+  font-size: 0.8125rem;
+  color: var(--result-absent);
 }
 
 .violationItem {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }

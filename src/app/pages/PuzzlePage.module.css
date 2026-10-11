@@ -2,7 +2,10 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding: 2rem 0 4rem;
+  padding: 1.5rem 0 4rem;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .header {
@@ -11,22 +14,36 @@
   gap: 0.75rem;
 }
 
-.title {
-  margin: 0;
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 800;
-}
-
-.badges {
+.headerTop {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
+}
+
+.dayBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  background-color: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 9999px;
+  color: var(--accent-text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.dayBadgeIcon {
+  font-size: 0.9rem;
 }
 
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.75rem;
+  padding: 0.25rem 0.65rem;
   background-color: var(--code-bg);
   color: var(--text-muted);
   border: 1px solid var(--border);
@@ -35,101 +52,90 @@
   font-weight: 500;
 }
 
-.gameLayout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-  margin-top: 1rem;
+.title {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-h);
 }
 
-@media (min-width: 768px) {
-  .gameLayout {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
-  }
-}
-
-.rulesCard {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
-}
-
-.rulesTitle {
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 1rem;
-}
-
-.rulesList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding-left: 1.25rem;
-  color: var(--text);
-  line-height: 1.5;
-}
-
-.boardArea {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
-.hintBtn {
+.difficultyTabs {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1.5rem;
-  background-color: var(--surface);
-  color: var(--text);
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background-color: var(--code-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  width: fit-content;
+}
+
+.diffTab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 150ms ease;
-  box-shadow: var(--shadow-sm);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: background-color 150ms ease, color 150ms ease;
+  user-select: none;
 }
 
-.hintBtn:hover {
-  background-color: var(--accent-bg);
-  border-color: var(--accent-border);
-  color: var(--accent);
+.diffTab:hover {
+  color: var(--text-h);
+  background-color: var(--surface);
 }
 
-.hintMessage {
-  padding: 0.85rem 1.15rem;
-  background-color: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  border-radius: var(--radius-md);
-  color: var(--text);
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  text-align: center;
-  max-width: 480px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+.diffTabActive {
+  background-color: var(--accent);
+  color: var(--on-accent) !important;
 }
+
+.diffTabSize {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+/* --- Loading state --- */
 
 .loadingArea {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.25rem;
   padding: 3rem 1rem;
   min-height: 300px;
-  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(var(--size, 4), minmax(0, 1fr));
+  gap: clamp(0.35rem, 1.2vw, 0.65rem);
+  width: 100%;
+  max-width: min(92vw, calc(var(--size, 4) * 4.25rem));
+  aspect-ratio: 1;
+  padding: clamp(0.5rem, 1.5vw, 0.85rem);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.skeletonCell {
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  background-color: var(--code-bg);
 }
 
 .loadingSpinner {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
   border: 3px solid var(--border);
   border-top-color: var(--accent);
   border-radius: 50%;
@@ -138,7 +144,7 @@
 
 .loadingText {
   color: var(--text-muted);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   margin: 0;
 }

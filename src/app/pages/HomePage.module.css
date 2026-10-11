@@ -2,35 +2,98 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  padding-bottom: 4rem;
+  padding: 1.5rem 0 4rem;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .header {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .dayBadge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   background-color: var(--accent-bg);
   color: var(--accent-text);
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.8rem;
+  border: 1px solid var(--accent-border);
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-h);
 }
 
 .subtitle {
   color: var(--text-muted);
-  font-size: 1.125rem;
+  font-size: 1.05rem;
+  margin-top: 0.5rem;
+  max-width: 52ch;
+}
+
+/* --- Daily challenge info section --- */
+
+.dailyInfo {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.dailyInfoTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0 0 0.5rem;
+}
+
+.dailyInfoText {
+  font-size: 0.9375rem;
+  color: var(--text);
+  line-height: 1.55;
+  margin: 0 0 0.35rem;
+}
+
+.dailyInfoHighlight {
+  font-weight: 600;
+  color: var(--accent-text);
+}
+
+/* --- Puzzle section --- */
+
+.puzzleHeading {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-h);
 }
 
 .puzzleGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 560px) {
+  .puzzleGrid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
 }
 
 .puzzleCard {
@@ -38,33 +101,29 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
-  transition:
-    transform 150ms ease,
-    box-shadow 150ms ease,
-    border-color 150ms ease;
+  transition: box-shadow 150ms ease, border-color 150ms ease;
   position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .puzzleCard:hover {
-  transform: translateY(-2px);
   border-color: var(--accent-border);
   box-shadow: var(--shadow-md);
 }
 
 .comingSoonBadge {
   position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
-  background-color: var(--accent-bg);
-  color: var(--accent-text);
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
+  top: 1rem;
+  right: 1rem;
+  background-color: var(--code-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -72,24 +131,21 @@
 
 .puzzleName {
   margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-h);
 }
 
 .puzzleSummary {
   margin: 0;
-  font-size: 1rem;
-  color: var(--text);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
   line-height: 1.5;
-}
-
-.puzzleHeading {
-  margin-top: 2rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border);
 }
 
 .difficultyList {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.5rem;
 }
@@ -98,19 +154,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.4rem 0.85rem;
+  padding: 0.4rem 1rem;
   background-color: var(--accent);
   color: var(--on-accent);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
-  transition:
-    background-color 150ms ease,
-    transform 150ms ease;
+  transition: background-color 150ms ease;
+  box-shadow: var(--shadow-sm);
 }
 
 .difficultyBtn:hover {
   background-color: var(--accent-hover);
-  transform: translateY(-1px);
 }

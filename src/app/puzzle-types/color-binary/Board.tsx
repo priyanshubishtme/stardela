@@ -79,6 +79,7 @@ interface BoardGridProps {
   squares: readonly Square[];
   startSquares: readonly Square[];
   size: number;
+  isSolved: boolean;
   highlightIndex?: number | null;
   onSquareClick: (index: number) => void;
 }
@@ -86,8 +87,16 @@ interface BoardGridProps {
 /**
  * Render the full grid of square buttons using dynamic CSS size variable.
  */
-function BoardGrid({ squares, startSquares, size, highlightIndex, onSquareClick }: BoardGridProps) {
+function BoardGrid({
+  squares,
+  startSquares,
+  size,
+  isSolved,
+  highlightIndex,
+  onSquareClick,
+}: BoardGridProps) {
   const gridStyle: GridStyle = { "--size": size };
+  const boardClass = [styles.board, isSolved ? styles.boardSolved : ""].filter(Boolean).join(" ");
   const cells = squares.map((square, index) => ({
     coordId: `pos-${Math.floor(index / size)}-${index % size}`,
     square,
@@ -97,7 +106,7 @@ function BoardGrid({ squares, startSquares, size, highlightIndex, onSquareClick 
   }));
 
   return (
-    <div className={styles.board} aria-label={words.boardLabel} style={gridStyle}>
+    <div className={boardClass} aria-label={words.boardLabel} style={gridStyle}>
       {cells.map(({ coordId, square, index, isFixed, isHighlighted }) => (
         <SquareButton
           key={coordId}
@@ -151,10 +160,11 @@ export function Board({
         squares={squares}
         startSquares={startSquares}
         size={size}
+        isSolved={isSolved}
         highlightIndex={highlightIndex}
         onSquareClick={handleClick}
       />
-      <p className={`${styles.status} ${isSolved ? styles.solved : ""}`}>
+      <p className={`${styles.statusCard} ${isSolved ? styles.statusSolved : ""}`}>
         {isSolved ? words.status.solved : words.status.start}
       </p>
     </div>
