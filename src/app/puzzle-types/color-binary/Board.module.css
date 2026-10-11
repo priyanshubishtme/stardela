@@ -1,0 +1,82 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(var(--size), minmax(0, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+  max-width: min(100%, calc(var(--size) * 4.5rem));
+  aspect-ratio: 1;
+  padding: 0.5rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.square {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--code-bg);
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 100ms ease,
+    background-color 150ms ease,
+    border-color 150ms ease;
+  user-select: none;
+}
+
+.square:hover:not(:disabled) {
+  transform: scale(1.02);
+}
+
+.square:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.squareFixed {
+  cursor: default;
+  border-width: 2px;
+}
+
+.squareRed {
+  background-color: #dc2626;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+.squareBlue {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+.squareEmpty {
+  background-color: var(--code-bg);
+  border-color: var(--border);
+}
+
+.status {
+  text-align: center;
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 480px;
+}
+
+.solved {
+  color: var(--accent);
+  font-weight: 600;
+}
