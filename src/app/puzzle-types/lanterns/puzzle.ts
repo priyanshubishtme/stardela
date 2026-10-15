@@ -1,0 +1,1 @@
+//Defines puzzle data, types and helper functions
