@@ -92,4 +92,4 @@ Deploy via Vercel Dashboard
 
 ## 📜 License
 
-Content and puzzles CC-BY-4.0 by Stardela.
+Content and puzzles CC-BY-4.0 by Priyanshu Bisht 
