@@ -1,72 +1,176 @@
-import type { Difficulty, difficulty } from "../../../shared/difficulty"
+import { easyLanterns } from "./banks/easy";
+import { mediumLanterns } from "./banks/medium";
+import { hardLanterns } from "./banks/hard";
+import { toughLanterns } from "./banks/tough";
+export { easyLanterns, mediumLanterns, hardLanterns, toughLanterns };
 export type LanternState = "lit" | "dark";
-export type LanternCategory = 
-|"science"
-|"technology"
-|"history"
-|"random"
-|"mythological"
-|"mathematics"
-|"current-affairs"
-|"general"
-|"logic";
-
-// Statement type supported by the game
+// Keep Tough local to Lanterns because the other puzzle modes do not support it.
+export type LanternDifficulty = "easy" | "medium" | "hard" | "tough";
+export type LanternCategory =
+  | "science"
+  | "technology"
+  | "history"
+  | "random"
+  | "mythological"
+  | "mathematics"
+  | "current-affairs"
+  | "general"
+  | "geography"
+  | "logic";
 export type LanternStatementType = "independent" | "connected";
+
 export interface Lantern {
-    readonly id: string;
-    readonly category: LanternCategory;
-    readonly difficulty: Difficulty;
-    readonly statement: string;
-    readonly statementType: LanternStatementType;
-    readonly correctState: LanternState;
-    readonly explanation: string;
-    
-// Id of the lantern referred by a connected account 
-readonly relatedLanternId?: string;
+  readonly id: string;
+  readonly category: LanternCategory;
+  readonly difficulty: LanternDifficulty;
+  readonly statement: string;
+  readonly statementType: LanternStatementType;
+  readonly correctState: LanternState;
+  readonly explanation: string;
+  readonly relatedLanternId?: string;
+}
 
-};
-
-export interface LanternPuzzle{
-    readonly id: string;
-    readonly type: "lanterns";
-    readonly difficulty: Difficulty;
-    readonly lanterns: readonly Lantern[];
-    readonly selectionCount: number;
-    readonly passingPercentage: number;
+export interface LanternPuzzle {
+  readonly id: string;
+  readonly type: "lanterns";
+  readonly difficulty: LanternDifficulty;
+  readonly lanterns: readonly Lantern[];
+  readonly selectionCount: number;
+  readonly passingPercentage: number;
 }
 
 export const LANTERNS_PER_BANK = 20;
 export const LANTERNS_PER_CHALLENGE = 10;
-export const PASSING_PERCENTAGE= 70;
+export const PASSING_PERCENTAGE = 70;
+const LANTERN_CATEGORIES = new Set<LanternCategory>([
+  "science",
+  "technology",
+  "history",
+  "random",
+  "mythological",
+  "mathematics",
+  "current-affairs",
+  "general",
+  "geography",
+  "logic",
+]);
 
+/** Calculate the number of correct answers needed to pass. */
 export function getPassingScore(
-    selectionCount: number,
-    passingPercentage: number = PASSING_PERCENTAGE,):number{
-        return Math.ceil((selectionCount * passingPercentage)/100);
+  selectionCount: number,
+  passingPercentage: number = PASSING_PERCENTAGE,
+): number {
+  return Math.ceil((selectionCount * passingPercentage) / 100);
+}
+
+/** Check IDs, references, and the expected bank size. */
+export function validateLanternBank(lanterns: readonly Lantern[]): {
+  valid: boolean;
+  errors: string[];
+} {
+  const errors: string[] = [];
+  const ids = new Set<string>();
+  if (lanterns.length !== LANTERNS_PER_BANK) {
+    errors.push(`Expected ${LANTERNS_PER_BANK} lanterns, received ${lanterns.length}.`);
+  }
+  for (const lantern of lanterns) {
+    if (ids.has(lantern.id)) errors.push(`Duplicate lantern ID: ${lantern.id}.`);
+    ids.add(lantern.id);
+    if (lantern.statementType === "independent" && lantern.relatedLanternId !== undefined) {
+      errors.push(`Independent lantern ${lantern.id} must not reference another lantern.`);
     }
-
-export function validateLanternBank()
-{
-    lanterns: readonly Lantern[],
-): {valid: Boolean; error{s: string[]
-}
-{
-    const errors: string[] = [];
-    const ids = new Set<string>();
-}
-
-if(LANTERNS_PER_BANK.length !== LANTERNS_PER_BANK){
-    errors.push(
-        'Expected ${LANTERS_PER_BANK'} LANTERNS_PER_BANK, received ${LANTERNS_PER_BANK.length}.',
-    );
-    
-}
-
-for (const lantern of lanterns)
-{
-    if(isDifficulty.has(lantern.id)){
-        errors.push('Duplicate Lantern ID: $')
+    if (lantern.statementType === "connected" && lantern.relatedLanternId === undefined) {
+      errors.push(`Connected lantern ${lantern.id} must reference another lantern.`);
     }
-    thi
+    if (lantern.relatedLanternId === lantern.id) {
+      errors.push(`Lantern ${lantern.id} must not reference itself.`);
+    }
+    if (!lantern.statement.trim()) errors.push(`Lantern ${lantern.id} has no statement.`);
+    if (!lantern.explanation.trim()) errors.push(`Lantern ${lantern.id} has no explanation.`);
+    if (!LANTERN_CATEGORIES.has(lantern.category))
+      errors.push(`Lantern ${lantern.id} has an invalid category.`);
+    if (lantern.correctState !== "lit" && lantern.correctState !== "dark") {
+      errors.push(`Lantern ${lantern.id} has an invalid answer.`);
+    }
+  }
+  if (lanterns.filter((lantern) => lantern.statementType === "connected").length !== 2) {
+    errors.push("Each bank must contain two connected lanterns.");
+  }
+  for (const lantern of lanterns) {
+    if (lantern.relatedLanternId && !ids.has(lantern.relatedLanternId)) {
+      errors.push(`Lantern ${lantern.id} references missing lantern ${lantern.relatedLanternId}.`);
+    }
+    const target = lanterns.find((item) => item.id === lantern.relatedLanternId);
+    if (lantern.statementType === "connected" && target?.statementType !== "independent") {
+      errors.push(`Connected lantern ${lantern.id} must reference an independent lantern.`);
+    }
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+/** Select lanterns for one difficulty. */
+export function getLanternsByDifficulty(
+  lanterns: readonly Lantern[],
+  difficulty: LanternDifficulty,
+): Lantern[] {
+  return lanterns.filter((lantern) => lantern.difficulty === difficulty);
+}
+
+/** Select lanterns in one category. */
+export function getLanternsByCategory(
+  lanterns: readonly Lantern[],
+  category: LanternCategory,
+): Lantern[] {
+  return lanterns.filter((lantern) => lantern.category === category);
+}
+
+/** Find one lantern by its ID. */
+export function findLantern(lanterns: readonly Lantern[], id: string): Lantern | undefined {
+  return lanterns.find((lantern) => lantern.id === id);
+}
+
+const banks: Record<LanternDifficulty, readonly Lantern[]> = {
+  easy: easyLanterns,
+  medium: mediumLanterns,
+  hard: hardLanterns,
+  tough: toughLanterns,
+};
+
+/** Select ten unique clues with one connected clue and its target. */
+export function createLanternPuzzle(
+  difficulty: LanternDifficulty,
+  random: () => number = Math.random,
+): LanternPuzzle {
+  const bank = banks[difficulty];
+  const validation = validateLanternBank(bank);
+  if (!validation.valid) throw new Error(validation.errors.join(" "));
+  const independent = bank.filter((lantern) => lantern.statementType === "independent");
+  const connected = bank.filter((lantern) => lantern.statementType === "connected");
+  const chosenConnection = connected[Math.floor(random() * connected.length)];
+  if (!chosenConnection?.relatedLanternId)
+    throw new Error(`No connected clue in ${difficulty} bank.`);
+  const target = independent.find((lantern) => lantern.id === chosenConnection.relatedLanternId);
+  if (!target) throw new Error(`Missing target for connected clue ${chosenConnection.id}.`);
+  const candidates = independent.filter((lantern) => lantern.id !== target.id);
+  const selected = [target];
+  while (selected.length < LANTERNS_PER_CHALLENGE - 1) {
+    const index = Math.floor(random() * candidates.length);
+    const [lantern] = candidates.splice(index, 1);
+    if (!lantern) throw new Error(`Could not select enough ${difficulty} clues.`);
+    selected.push(lantern);
+  }
+  selected.push(chosenConnection);
+  for (let index = selected.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(random() * (index + 1));
+    [selected[index], selected[swap]] = [selected[swap]!, selected[index]!];
+  }
+  const lanterns = selected;
+  return {
+    id: `lanterns-${difficulty}-${Math.floor(random() * 1_000_000)}`,
+    type: "lanterns",
+    difficulty,
+    lanterns,
+    selectionCount: LANTERNS_PER_CHALLENGE,
+    passingPercentage: PASSING_PERCENTAGE,
+  };
 }

@@ -1,16 +1,27 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { describe, expect, it } from "vitest";
 import { routes } from "./routes";
 
+// Submit one answer before opening the next lantern in the route test.
+async function answerTenLanterns(
+  user: ReturnType<typeof userEvent.setup>,
+  index = 0,
+): Promise<void> {
+  if (index === 10) return;
+  await user.click(screen.getByRole("button", { name: `Lantern ${index + 1}` }));
+  await user.click(screen.getByRole("button", { name: "Lit - true" }));
+  await answerTenLanterns(user, index + 1);
+}
+
 describe("routes - root and error", () => {
-  it("has a root route that displays puzzle types and coming soon badges", async () => {
+  it("has a root route that links to every available puzzle", async () => {
     const router = createMemoryRouter(routes, {
       initialEntries: ["/"],
     });
 
     render(<RouterProvider router={router} />);
-
     const puzzle1 = await screen.findByRole("heading", { name: "Guzzle", level: 3 });
     const puzzle2 = screen.getByRole("heading", { name: "Lanterns", level: 3 });
     const colorBinary = screen.getByRole("heading", { name: "Colour Binary", level: 3 });
@@ -19,8 +30,9 @@ describe("routes - root and error", () => {
     expect(puzzle2).toBeDefined();
     expect(colorBinary).toBeDefined();
 
-    const badges = screen.getAllByText("Coming Soon");
-    expect(badges).toHaveLength(1);
+    expect(screen.getByRole("link", { name: "Play Lanterns" }).getAttribute("href")).toBe(
+      "/lanterns",
+    );
 
     const easyLinks = screen.getAllByRole("link", { name: "Easy" });
     expect(easyLinks[0]?.getAttribute("href")).toBe("/puzzles/colour-binary-0005");
@@ -93,5 +105,54 @@ describe("routes - guzzle page", () => {
     expect(heading).toBeDefined();
     expect(screen.getByText("RULES")).toBeDefined();
     expect(screen.getByRole("button", { name: "Reset" })).toBeDefined();
+  });
+});
+
+describe("routes - Lanterns page", () => {
+  it("loads the challenge and shows results only after ten answers", async () => {
+    const router = createMemoryRouter(routes, { initialEntries: ["/lanterns"] });
+    render(<RouterProvider router={router} />);
+    const user = userEvent.setup();
+
+    expect(await screen.findByRole("heading", { name: "Lanterns", level: 1 })).toBeDefined();
+    await user.click(screen.getByRole("button", { name: "Play" }));
+    await user.click(screen.getByRole("button", { name: "Start easy challenge" }));
+    expect(screen.getByText("0 of 10 classified")).toBeDefined();
+    expect(screen.queryByText("21 is a prime number.")).toBeNull();
+
+    await answerTenLanterns(user);
+    expect(screen.getByText(/\d+ correct, \d+ incorrect/u)).toBeDefined();
+    expect(localStorage.getItem("stardela_lanterns_stats_v1")).toContain('"played":1');
+    await user.click(screen.getByRole("button", { name: "Play again" }));
+    expect(screen.getByText("0 of 10 classified")).toBeDefined();
+  });
+
+  it("hides correctness after an answer during the round", async () => {
+    const router = createMemoryRouter(routes, { initialEntries: ["/lanterns"] });
+    render(<RouterProvider router={router} />);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: "Play" }));
+    await user.click(screen.getByRole("button", { name: "Start easy challenge" }));
+    await user.click(screen.getByRole("button", { name: "Lantern 1" }));
+    await user.click(screen.getByRole("button", { name: "Lit - true" }));
+    expect(screen.queryByText(/Correct\.|Incorrect\./u)).toBeNull();
+    expect(screen.getByText("1 of 10 classified")).toBeDefined();
+  });
+
+  it("opens the landing screen when saved statistics are malformed", async () => {
+    localStorage.setItem("stardela_lanterns_stats_v1", "invalid json");
+    const router = createMemoryRouter(routes, { initialEntries: ["/lanterns"] });
+    render(<RouterProvider router={router} />);
+    expect(await screen.findByRole("button", { name: "Play" })).toBeDefined();
+  });
+
+  it("starts a Tough round from the difficulty menu", async () => {
+    const router = createMemoryRouter(routes, { initialEntries: ["/lanterns"] });
+    render(<RouterProvider router={router} />);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: "Play" }));
+    await user.click(screen.getByRole("button", { name: /TOUGH/u }));
+    await user.click(screen.getByRole("button", { name: "Start tough challenge" }));
+    expect(screen.getByText("TOUGH - 70% to pass - 10 remaining")).toBeDefined();
   });
 });

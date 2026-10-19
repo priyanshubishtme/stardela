@@ -109,6 +109,25 @@ function ComingSoonCard({ title, summary }: { title: string; summary: string }) 
   );
 }
 
+/** Link to the playable Lanterns challenge. */
+function LanternsCard() {
+  return (
+    <div className={styles.puzzleCard}>
+      <div className={styles.puzzleCardContent}>
+        <h3 className={styles.puzzleName}>Lanterns</h3>
+        <p className={styles.puzzleSummary}>
+          Read each statement, then mark its lantern lit or dark.
+        </p>
+      </div>
+      <div className={styles.difficultyList}>
+        <Link to="/lanterns" className={styles.difficultyBtn}>
+          Play Lanterns
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 /**
  * Home page view.
  * Displays day number, compact daily challenge information, and available puzzle types.
@@ -140,6 +159,7 @@ export function HomePage() {
             if (app.id === "guzzle") {
               return <GuzzleCard key={app.id} dailyPuzzles={data.dailyPuzzles} />;
             }
+            if (app.id === "lanterns") return <LanternsCard key={app.id} />;
             return <ColourBinaryCard key={app.id} dailyPuzzles={data.dailyPuzzles} />;
           })}
         </div>

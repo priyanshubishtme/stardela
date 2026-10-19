@@ -1,1 +1,227 @@
-/* Styles the seesion layout, rules, panel and controls
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  width: 100%;
+}
+.instructions,
+.clue,
+.result {
+  color: #f5f1e8;
+}
+.instructions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 0.75rem;
+  padding: 0.2rem 0 0.5rem;
+  color: #c5c9d5;
+  font-size: 0.87rem;
+}
+.instructions strong {
+  color: #f3d89d;
+}
+.progress {
+  margin: 0;
+  color: #f4e7c9;
+  font-weight: 700;
+}
+.progressTrack {
+  display: block;
+  width: 100%;
+  height: 5px;
+  appearance: none;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #d3d8ef22;
+  box-shadow: inset 0 1px 2px #0005;
+}
+.progressTrack::-webkit-progress-bar {
+  background: #d3d8ef22;
+}
+.progressTrack::-webkit-progress-value {
+  border-radius: inherit;
+  background: linear-gradient(90deg, #c98b55, #ffe29c);
+  box-shadow: 0 0 14px #ffd78588;
+  transition: width 300ms ease;
+}
+.progressTrack::-moz-progress-bar {
+  border-radius: inherit;
+  background: linear-gradient(90deg, #c98b55, #ffe29c);
+  box-shadow: 0 0 14px #ffd78588;
+}
+.gameActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: #c2c7d5;
+  font-size: 0.9rem;
+}
+.gameActions button,
+.container > button {
+  min-height: 42px;
+  padding: 0.6rem 1rem;
+  border: 1px solid #f2d49b65;
+  border-radius: 999px;
+  background: #e9ba63;
+  color: #211b2b;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+.gameActions button:hover,
+.container > button:hover {
+  background: #ffdc8c;
+}
+.clue {
+  position: relative;
+  padding: clamp(1rem, 3vw, 1.6rem);
+  overflow: hidden;
+  border: 1px solid #e2c18435;
+  border-radius: 1.15rem;
+  background: linear-gradient(135deg, #181b2beb, #141727f2);
+  box-shadow:
+    0 18px 42px #05091666,
+    inset 0 1px #fff1;
+}
+.clue::before {
+  position: absolute;
+  top: -5rem;
+  right: 4rem;
+  width: 12rem;
+  height: 12rem;
+  border-radius: 50%;
+  background: #ffc76b12;
+  filter: blur(28px);
+  content: "";
+  pointer-events: none;
+}
+.category {
+  position: relative;
+  margin: 0;
+  color: #f0c775;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.clue h2,
+.result h2 {
+  position: relative;
+  margin: 0.55rem 0 1.1rem;
+  color: #fff7e7;
+  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  line-height: 1.45;
+}
+.actions {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.actions button {
+  display: grid;
+  grid-template-columns: 2.1rem 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 0.65rem;
+  min-width: 148px;
+  min-height: 68px;
+  padding: 0.65rem 1rem;
+  border: 1px solid #f3d69b88;
+  border-radius: 0.85rem;
+  color: #241b2b;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    filter 160ms ease;
+}
+.actions button:hover {
+  filter: brightness(1.09);
+  transform: translateY(-2px);
+}
+.actions button:focus-visible,
+.gameActions button:focus-visible,
+.container > button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+.actions button > span {
+  grid-row: 1 / span 2;
+  font-size: 1.7rem;
+  text-align: center;
+}
+.actions button strong {
+  align-self: end;
+  font-size: 1.08rem;
+}
+.actions button small {
+  align-self: start;
+  font-size: 0.75rem;
+  opacity: 0.78;
+}
+.litChoice {
+  background: linear-gradient(135deg, #ffe39d, #e8ad56);
+  box-shadow: 0 6px 20px #e5a74426;
+}
+.darkChoice {
+  background: linear-gradient(135deg, #d7d7e3, #aaaec5);
+  border-color: #dce0f388 !important;
+}
+.result {
+  padding: clamp(1rem, 3vw, 1.6rem);
+  border: 1px solid #e2c18445;
+  border-radius: 1rem;
+  background: #111729e8;
+  box-shadow: 0 18px 46px #05091666;
+}
+.result p {
+  margin: 0.4rem 0;
+  color: #d7d9df;
+}
+.result h2 {
+  color: #ffe5a2;
+}
+.review {
+  display: grid;
+  gap: 0.9rem;
+  padding-left: 1.4rem;
+}
+.review li {
+  padding: 0.7rem 0.8rem;
+  border-left: 2px solid #d1a760a3;
+  border-radius: 0 0.5rem 0.5rem 0;
+  background: #ffffff08;
+  line-height: 1.5;
+}
+.review li strong {
+  color: #f5dfb0;
+}
+.review span {
+  color: #bdc4d2;
+}
+@media (max-width: 560px) {
+  .instructions {
+    line-height: 1.4;
+  }
+  .gameActions {
+    align-items: flex-start;
+  }
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .actions button {
+    min-width: 0;
+    padding: 0.6rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .actions button {
+    transition: none;
+  }
+}

@@ -71,7 +71,7 @@ export const puzzleApps: PuzzleAppInfo[] = [
     id: "lanterns",
     name: "Lanterns",
     summary: "Lit lanterns tell the truth, dark lanterns lie.",
-    isAvailable: false,
+    isAvailable: true,
   },
 ];
 

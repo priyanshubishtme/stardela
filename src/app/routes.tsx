@@ -7,6 +7,7 @@ import { homeLoader } from "./daily";
 import { HomePage } from "./pages/HomePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { PuzzlePage } from "./pages/PuzzlePage";
+import { LanternsPage } from "./pages/LanternsPage";
 
 /**
  * Route definitions for the application.
@@ -41,6 +42,10 @@ export const routes: RouteObject[] = [
         element: <PuzzlePage />,
         loader: puzzleLoader,
         hydrateFallbackElement: <p>{text.puzzlePage.loading}</p>,
+      },
+      {
+        path: "lanterns",
+        element: <LanternsPage />,
       },
       {
         path: "puzzles/:puzzleId",

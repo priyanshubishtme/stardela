@@ -1,22 +1,25 @@
 # Lanterns
+
 - Contains Gameplay, scoring, difficulty levels, puzzle design constraint with example
 
-## About the Game 
-Lanterns is a logic and reasoning puzzle where players investigate floating lanterns in the night skup. Each lantern contains a statement that the play must evaluate as true or false. 
+## About the Game
 
-The player must decide whether each lantern should be dark or lit. 
+Lanterns is a logic and reasoning puzzle where players investigate floating lanterns in the night skup. Each lantern contains a statement that the play must evaluate as true or false.
+
+The player must decide whether each lantern should be dark or lit.
 
 - A lit lantern represents a TRUE statement
 - A dark lantern represents a FALSE statement
 
 The challenge is to evaluate the statements correctly, connect the clues, and identify the correct configuration of the lanterns.
 
-Players must classify every lantern before the game reveals their final score and the correctness of their answers. 
+Players must classify every lantern before the game reveals their final score and the correctness of their answers.
 
 ## Objective
-Classify the lanterns according to the truth of their statements. 
 
-The player wins by correctly clasifying at least 90% of the lanterns. 
+Classify the lanterns according to the truth of their statements.
+
+The player wins by correctly classifying at least 70% of the lanterns.
 
 For the initial version, every challenge contains 10 lanterns
 
@@ -24,40 +27,47 @@ For the initial version, every challenge contains 10 lanterns
 - 7 Correct Answer: Challenge Completed
 - 6 or fewer Correct Answer: Challenge not Completed
 
-The Player receives no correctness feedback while answering the puzzle. 
+The Player receives no correctness feedback while answering the puzzle.
 
 The final result is displayed only after every lantern has been clasified
 
-## Core Rules 
+## Core Rules
 
 ### Rule 1: Lit means True
+
 - A lantern must be marked as lit when its statement is true
 
 ### Rule 2: Dark means False
+
 - A lantern must be marked ad dark when its statement is false
 
 ### Rule 3: Lantern / Statement can depend on other lanterns
+
 - Few one or two lanterns might describe the state of other lanterns
 - The truth of such lanterns is evaluated using the final configurations of the lanterns
 
 ### Rule 4: Every lantern can be answered only once
+
 - Player may inspect the lantern in any order
 - Selecting a lantern reveals its statement
-- Players cannot inspect multiple lanterns before submitting their answer, if a lantern is selected they have to answer it, 
+- Players cannot inspect multiple lanterns before submitting their answer, if a lantern is selected they have to answer it,
 - Players can select from a collection of 20 lanterns
 - A classified lantern cannot be changed or classified or viewed again.
 
-### Rule 5: No immediate Correctness Feedback 
+### Rule 5: No immediate Correctness Feedback
+
 - The game must not reveal whether an individual answer is correct while the challenge is in progress
 - Player must rely on their understanding, reasoning, and deductions
 - After every lantern has been classified, the game evaluate the complete board and displays the result
 
 ### Rule 6: Categories and Labels of Lanters
+
 - Each lantern must have label category to which it belongs
-- The themes are - Science, Tech, History, Random, Mythological, Maths, Current Affairs, General 
+- The themes are - Science, Tech, History, Random, Mythological, Maths, Current Affairs, General
 - The no of category questions depend on the difficulty level
 
 ### Rule 7: The Final Evaluation
+
 After all teh lanterns have been classified, the game evaluates each statement
 A lantern is correctly classified when:
 
@@ -72,45 +82,53 @@ For factual statements, the truth is determined by the relevant facts.
 The game calculates the total number of correctly classified lanterns
 and checks whether the player has achieved the 70 percent threshold
 
-## How to Play 
+## How to Play
+
 ### Step 1 : Explore the Sky
+
 Lanterns float in the night sky
 The Lanterns have category label on them
 Each level have 20 lanterns to pick from
 The order in which lanterns are inspected is not predetermined
 Their positions may change between the challeges to make the experience feel fresh
 
-### Step 2 : Investigate / Pick  a Lantern
+### Step 2 : Investigate / Pick a Lantern
+
 When the player selects a lantern, its statement becomes visible
 The statement may involve:
+
 - A factual claim
 - A logical relationship between lanterns
 - A pattern or number based deductions
 - A more complicated reasoning problem
 - Quiz Questions according to the theme category
 
-### Step 3 : Make a Decision 
+### Step 3 : Make a Decision
+
 The player chooses one of a two option for an inspected lantern
+
 - Lit - The statement is true
 - Dark: The statement is false
 
-Once submitted, the decision is locked 
+Once submitted, the decision is locked
 The player cannot change the lantern's state afterward
 
 ### Step 4 : Complete the Board
+
 The player continues until every lantern has been classified
 No correctness indicators or individual answer results appear during this stage
 
-### Step 5 : Discover the Result 
+### Step 5 : Discover the Result
+
 Once all the lanterns have been classified, the game evaluates the board
 The result screen displays
+
 - The no of correct answers
 - The no of incorrect answers
 - The finaly accuracy percentage
 - Whether the player passed the challenge
 - The correct state of attempted lantern
 - Explanation for the statement and their correct classification
-
 
 ## Difficulty Levels
 
@@ -187,7 +205,6 @@ The player should never lose points because a question has multiple reasonable i
 
 In the initial version, a lantern's statement must not directly describe that same lantern's light state.
 
-
 ### 3. Logic Puzzles Must Be Solvable
 
 Statements involving other lanterns must form a consistent puzzle.
@@ -218,7 +235,6 @@ Hard should demand deeper reasoning and more complicated deductions.
 Every published puzzle should have explanations available after completion.
 
 An explanation should describe why a statement is true or false andhow its correct lantern state follows from the rules.
-
 
 ## Expected Player Experience
 
