@@ -5,41 +5,41 @@ import type { Lantern } from "../puzzle";
 const toughFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   {
     category: "logic",
-    statement: "If exactly one of A and B is true, and A is false, then B is true.",
+    statement: "If exactly one of A and B is true, and A is false, then B is false.",
     statementType: "independent",
-    correctState: "lit",
+    correctState: "dark",
     explanation:
-      "The exclusive choice requires one true statement. Since A is false, B must be true.",
+      "Exactly one must be true. Since A is false, B must be true, so the claim that B is false does not hold.",
   },
   {
     category: "mathematics",
-    statement: "A two-digit number with digit sum 9 is divisible by 9.",
+    statement: "Every two-digit number with digit sum 9 is odd.",
     statementType: "independent",
-    correctState: "lit",
-    explanation: "A number is divisible by 9 when its digit sum is divisible by 9.",
+    correctState: "dark",
+    explanation: "The two-digit number 18 has digit sum 9 and is even, so the claim is false.",
   },
   {
     category: "logic",
-    statement:
-      "The converse of 'If it rains, the ground gets wet' is 'If the ground is wet, it rained.'",
+    statement: "If it rains, the ground gets wet; therefore, wet ground proves that it rained.",
+    statementType: "independent",
+    correctState: "dark",
+    explanation:
+      "This reverses the implication. A sprinkler can make the ground wet, so wet ground does not prove that it rained.",
+  },
+  {
+    category: "mathematics",
+    statement: "The least common multiple of 72 and 108 is 216.",
     statementType: "independent",
     correctState: "lit",
     explanation:
-      "The converse swaps the condition and result. It does not claim the converse is true.",
+      "72 is 2^3 x 3^2 and 108 is 2^2 x 3^3. Use the greatest power of each prime: 2^3 x 3^3 = 216.",
   },
   {
     category: "mathematics",
-    statement: "The least common multiple of 12 and 18 is 36.",
+    statement: "A 3 by 3 magic square using 1 through 9 has center value 4.",
     statementType: "independent",
-    correctState: "lit",
-    explanation: "36 is the smallest positive number divisible by both 12 and 18.",
-  },
-  {
-    category: "mathematics",
-    statement: "A 3 by 3 magic square using 1 through 9 has center value 5.",
-    statementType: "independent",
-    correctState: "lit",
-    explanation: "In the normal 3 by 3 magic square, opposite pairs sum to 10 around the center 5.",
+    correctState: "dark",
+    explanation: "The normal 3 by 3 magic square has center 5. Opposite pairs sum to 10 around it.",
   },
   {
     category: "science",
@@ -52,10 +52,11 @@ const toughFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   {
     category: "mathematics",
     statement:
-      "The probability of two independent fair coin flips both being heads is one quarter.",
+      "The probability of drawing two aces in a row from a 52-card deck, without replacement, is 1/221.",
     statementType: "independent",
     correctState: "lit",
-    explanation: "The probabilities multiply: one half times one half equals one quarter.",
+    explanation:
+      "The chance is 4/52 for the first ace, then 3/51 for the second. Their product is 12/2652, which reduces to 1/221.",
   },
   {
     category: "logic",
@@ -66,17 +67,19 @@ const toughFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
   {
     category: "mathematics",
-    statement: "The next number in 1, 1, 2, 3, 5, 8 is 13 under the Fibonacci rule.",
+    statement: "For every integer n, n squared leaves remainder 0 or 1 when divided by 4.",
     statementType: "independent",
     correctState: "lit",
-    explanation: "Each term is the sum of the prior two: 5 + 8 = 13.",
+    explanation:
+      "If n is even, n squared is divisible by 4. If n is odd, write n as 2k + 1; its square is 4k(k + 1) + 1, with remainder 1.",
   },
   {
     category: "mathematics",
-    statement: "A 5-sided polygon has interior angle sum 540 degrees.",
+    statement: "For every integer n, n cubed minus n is divisible by 6.",
     statementType: "independent",
     correctState: "lit",
-    explanation: "(5 - 2) x 180 = 540 degrees.",
+    explanation:
+      "n cubed minus n equals (n - 1)n(n + 1). These are three consecutive integers, so their product is divisible by 2 and by 3, and therefore by 6.",
   },
   {
     category: "technology",
@@ -88,10 +91,12 @@ const toughFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
   {
     category: "mathematics",
-    statement: "If x + y = 10 and x - y = 2, then x equals 6.",
+    statement:
+      "If x + y = 11 and xy = 28 for real x and y, then x and y are 4 and 7 in some order.",
     statementType: "independent",
     correctState: "lit",
-    explanation: "Adding the equations gives 2x = 12, so x = 6.",
+    explanation:
+      "Treat x and y as roots of t squared - 11t + 28 = 0. It factors as (t - 4)(t - 7), so the roots are 4 and 7.",
   },
   {
     category: "science",
@@ -109,10 +114,11 @@ const toughFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
   {
     category: "mathematics",
-    statement: "The sum of the interior angles of a 12-sided polygon is 1800 degrees.",
+    statement: "The product of an even number of negative integers is negative.",
     statementType: "independent",
-    correctState: "lit",
-    explanation: "(12 - 2) x 180 = 1800 degrees.",
+    correctState: "dark",
+    explanation:
+      "Each pair of negative factors has a positive product. An even number of negative factors makes an even number of pairs, so the total product is positive.",
   },
   {
     category: "science",
@@ -124,18 +130,21 @@ const toughFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
   {
     category: "mathematics",
-    statement: "The product of two negative integers is negative.",
+    statement: "If an integer's square is divisible by 12, that integer must be divisible by 12.",
     statementType: "independent",
     correctState: "dark",
-    explanation: "The product of two negative numbers is positive.",
+    explanation:
+      "Six is a counterexample: 6 squared is 36, which is divisible by 12, but 6 is not divisible by 12.",
   },
   {
     category: "logic",
-    statement: "If some A are B, then all A are B.",
+    statement: "If P implies Q and Q is true, then P must be true.",
     statementType: "independent",
     correctState: "dark",
-    explanation: "Some members do not imply that every member belongs to the group.",
+    explanation:
+      "This affirms the consequent. Rain can make a road wet, but a wet road does not prove that it rained.",
   },
 ];
 
+/** Create the Tough bank from its eighteen independent statements and two links. */
 export const toughLanterns: readonly Lantern[] = createLanternBank(toughFacts, "tough");

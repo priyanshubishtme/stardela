@@ -1,257 +1,278 @@
 .board {
+  /* Add a slow light change to the board frame. */
   position: relative;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: center;
-  gap: clamp(0.45rem, 2.4vw, 2rem) clamp(0.35rem, 1.8vw, 1.3rem);
-  min-height: 330px;
-  padding: clamp(1.2rem, 4vw, 3rem);
+  gap: 0.35rem 1rem;
+  min-height: 470px;
+  padding: 1.2rem clamp(0.75rem, 3vw, 2.4rem);
   overflow: hidden;
-  border: 1px solid #aab2db2b;
-  border-radius: 1.5rem;
+  border: 1px solid #aab2db22;
+  border-radius: 1.4rem;
   background:
-    radial-gradient(ellipse at 50% 8%, #c5bde526, transparent 45%),
-    linear-gradient(180deg, #151b34a8, #10162d80 62%, #0c1327b0);
+    radial-gradient(ellipse at 50% 5%, #adb6d113, transparent 44%),
+    radial-gradient(ellipse at 50% 100%, #e2b76b0b, transparent 48%),
+    linear-gradient(180deg, #10172a9c, #111a2d9c);
   box-shadow:
-    inset 0 1px #ffffff10,
-    0 24px 70px #06091355;
-}
-.board::before,
-.board::after {
-  position: absolute;
-  z-index: 0;
-  right: -4%;
-  bottom: -26%;
-  left: -4%;
-  height: 45%;
-  content: "";
-  pointer-events: none;
-}
-.board::before {
-  border-radius: 50% 50% 0 0;
-  background: linear-gradient(180deg, #27314b, #182238 70%);
-  transform: rotate(-3deg);
-}
-.board::after {
-  right: 36%;
-  bottom: -33%;
-  left: -8%;
-  height: 55%;
-  border-radius: 50% 55% 0 0;
-  background: linear-gradient(180deg, #1b2940, #101a2d 75%);
-  transform: rotate(5deg);
+    inset 0 1px #ffffff0c,
+    0 24px 70px #06091342;
+  animation: skyBreath 9s ease-in-out infinite alternate;
 }
 .lantern {
-  --float: 0px;
+  --float: -5px;
   position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.2rem;
-  min-width: 0;
-  min-height: 140px;
-  padding: 0.65rem 0.25rem 0.8rem;
+  display: block;
+  justify-self: center;
+  width: min(100%, 156px);
+  height: 205px;
+  padding: 0;
   border: 0;
-  border-radius: 0;
-  color: #fff1c8;
+  border-radius: 1rem;
   background: transparent;
-  box-shadow: none;
+  color: #f7e8c8;
   cursor: pointer;
   isolation: isolate;
   transition:
     transform 220ms ease,
-    filter 220ms ease,
+    background 220ms ease,
     opacity 220ms ease;
-  animation: drift 5.5s ease-in-out infinite alternate;
+  animation: float 6s ease-in-out infinite alternate;
 }
 .board .lantern {
+  min-height: 0;
   border: 0;
-  border-radius: 0;
+  border-radius: 1rem;
   background: transparent;
   box-shadow: none;
-  color: #fff1c8;
+  color: #f7e8c8;
   font: inherit;
 }
 .lantern:nth-child(5n + 1) {
-  --float: -8px;
-  animation-delay: -2.8s;
+  --float: -7px;
+  animation-delay: -2.7s;
 }
 .lantern:nth-child(5n + 2) {
   --float: 8px;
   animation-delay: -1.2s;
 }
 .lantern:nth-child(5n + 3) {
-  --float: -3px;
-  animation-delay: -3.7s;
+  --float: -2px;
+  animation-delay: -3.8s;
 }
 .lantern:nth-child(5n + 4) {
-  --float: 12px;
-  animation-delay: -0.4s;
+  --float: 6px;
+  animation-delay: -0.5s;
 }
 .lantern::before {
   position: absolute;
   z-index: -1;
-  top: 22%;
+  top: 18%;
   left: 50%;
-  width: min(78%, 120px);
+  width: 68%;
   aspect-ratio: 0.8;
   border-radius: 50%;
   background: #ffc964;
-  filter: blur(24px);
-  opacity: 0.2;
   content: "";
+  filter: blur(30px);
+  opacity: 0.17;
   transform: translateX(-50%);
   transition:
-    box-shadow 220ms ease,
-    background 220ms ease;
-}
-.art {
-  position: absolute;
-  z-index: -1;
-  top: 4%;
-  left: 50%;
-  width: min(82%, 128px);
-  height: 90%;
-  overflow: visible;
-  transform: translateX(-50%);
-  filter: drop-shadow(0 9px 14px #070b1670);
+    opacity 200ms ease,
+    filter 200ms ease;
 }
 .lantern::after {
   position: absolute;
-  top: 17%;
-  left: 50%;
-  width: min(54%, 84px);
-  height: 2px;
-  border-radius: 50%;
-  background: #fff0c8b8;
-  box-shadow:
-    0 71px #965a4377,
-    0 0 8px #fff0c8;
+  z-index: -1;
+  inset: 7% 12% 18%;
+  border: 1px solid transparent;
+  border-radius: 48% 48% 42% 42%;
   content: "";
+  transition:
+    border-color 220ms ease,
+    background 220ms ease,
+    box-shadow 220ms ease;
+}
+.art {
+  position: absolute;
+  top: 1%;
+  left: 50%;
+  width: 116px;
+  height: 162px;
+  overflow: visible;
   transform: translateX(-50%);
+  transition:
+    filter 200ms ease,
+    transform 200ms ease;
+}
+.number {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  color: #fff5d5;
+  font-size: 1.08rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-shadow: 0 1px 4px #703f32b0;
+  transform: translate(-50%, -50%);
+}
+.category {
+  position: absolute;
+  right: 0;
+  bottom: 13%;
+  left: 0;
+  overflow: hidden;
+  color: #f3ead8;
+  font-size: 0.74rem;
+  font-weight: 650;
+  letter-spacing: 0.015em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  text-shadow:
+    0 1px 5px #0a1021,
+    0 0 8px #0a1021;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.state {
+  position: absolute;
+  right: 0;
+  bottom: 2%;
+  left: 0;
+  color: #c8ccd7;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 .lantern:hover:not(:disabled),
 .lantern:focus-visible,
 .selected {
   z-index: 2;
   outline: 0;
-  filter: brightness(1.16);
-  transform: translateY(calc(var(--float) - 5px)) scale(1.06);
+  background: #ffffff08;
+  transform: translateY(calc(var(--float) - 3px)) scale(1.035);
 }
-.lantern:focus-visible::before,
-.selected::before {
-  opacity: 0.54;
-  filter: blur(28px);
+.lantern:focus-visible {
+  box-shadow:
+    0 0 0 2px #ffe6ad,
+    0 0 0 5px #ffe6ad35;
+}
+.lantern:hover:not(:disabled)::before,
+.selected::before,
+.lit::before {
+  opacity: 0.38;
+  filter: blur(34px);
 }
 .answered {
   animation-play-state: paused;
 }
-.lit::before {
-  opacity: 0.55;
-  filter: blur(29px);
+.lit .state {
+  color: #fff0b7;
 }
-.dark {
-  color: #b8bfd0;
-  filter: saturate(0.4) brightness(0.68);
-}
-.dark::before {
-  background: #8792b5;
-  opacity: 0.08;
+.dark .state {
+  color: #b9c7e8;
 }
 .lantern:disabled {
   cursor: default;
 }
-.glow {
-  z-index: 1;
-  height: 1.25rem;
-  color: #fff4c7;
-  font-size: 1.1rem;
-  line-height: 1;
-  text-shadow: 0 0 11px #fff5bc;
+.dark .art {
+  opacity: 0.62;
+  filter: saturate(0.35) hue-rotate(18deg) brightness(0.72) drop-shadow(0 0 10px #7086c455);
 }
-.number {
-  z-index: 1;
-  font-size: clamp(0.9rem, 1.5vw, 1.15rem);
-  font-weight: 800;
-  letter-spacing: 0.04em;
+.lit::before {
+  background: #ffc95d;
+  opacity: 0.48;
+  filter: blur(38px);
 }
-.category {
-  z-index: 1;
-  max-width: 94%;
-  overflow: hidden;
-  color: #fff6db;
-  font-size: clamp(0.58rem, 0.95vw, 0.72rem);
-  font-weight: 600;
-  text-overflow: ellipsis;
-  text-transform: capitalize;
-  white-space: nowrap;
+.lit::after {
+  /* Mark a true answer with warm light. */
+  border-color: #ffe09a66;
+  background: #ffcf5d0b;
+  box-shadow: 0 0 30px #ffc95d20;
 }
-.state {
-  z-index: 1;
-  margin-top: 0.12rem;
-  color: #392b35;
-  font-size: 0.59rem;
-  font-weight: 800;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
+.dark::before {
+  background: #7189c6;
+  opacity: 0.2;
+  filter: blur(28px);
 }
-.dark .state {
-  color: #e1e2ec;
+.dark::after {
+  /* Mark a false answer with a cool night tone. */
+  border-color: #91a5dc4d;
+  background: #34477520;
 }
-@keyframes drift {
+.answered .state {
+  padding: 0.22rem 0.3rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: #10172bce;
+}
+.board:has(.selected) {
+  border-color: #e8c6786b;
+  box-shadow:
+    inset 0 0 36px #e2b76b0c,
+    0 24px 70px #06091342;
+}
+@keyframes skyBreath {
+  from {
+    box-shadow:
+      inset 0 1px #ffffff0c,
+      0 24px 70px #06091342;
+  }
   to {
-    transform: translateY(var(--float));
+    box-shadow:
+      inset 0 1px #ffffff12,
+      0 24px 76px #06091365;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .lantern {
-    animation: none;
-    transition: none;
+@keyframes float {
+  to {
+    translate: 0 var(--float);
   }
 }
 @media (max-width: 760px) {
   .board {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 0.35rem;
-    min-height: 255px;
-    padding: 1rem 0.45rem;
-  }
-  .lantern {
-    min-height: 112px;
-    padding-inline: 0;
-  }
-  .lantern::before {
-    width: 88%;
-  }
-  .art {
-    width: 95%;
-  }
-  .lantern::after {
-    width: 60%;
-  }
-  .glow {
-    height: 0.9rem;
-    font-size: 0.9rem;
-  }
-}
-@media (max-width: 440px) {
-  .board {
-    gap: 0.15rem;
+    gap: 0.25rem;
+    min-height: 420px;
     padding-inline: 0.25rem;
   }
   .lantern {
-    min-height: 96px;
-  }
-  .lantern::before {
-    width: 93%;
+    width: 100%;
+    height: 190px;
   }
   .art {
-    width: 100%;
+    width: 104px;
+    height: 148px;
   }
-  .state {
-    font-size: 0.48rem;
-    letter-spacing: 0.04em;
+  .category {
+    font-size: 0.66rem;
+  }
+}
+@media (max-width: 560px) {
+  .board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem;
+    min-height: 0;
+    padding: 0.7rem;
+  }
+  .lantern {
+    width: min(100%, 170px);
+    height: 196px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .board {
+    animation: none;
+  }
+  .lantern {
+    animation: none;
+    transition: none;
+    translate: 0;
+  }
+  .art,
+  .lantern::before {
+    transition: none;
   }
 }

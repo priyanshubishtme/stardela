@@ -1,0 +1,8 @@
+.illustration {
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 8px 12px #03071170);
+}
+.dimmed {
+  filter: saturate(0.2) brightness(0.55) drop-shadow(0 5px 8px #03071170);
+}

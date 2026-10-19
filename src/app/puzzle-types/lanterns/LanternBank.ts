@@ -30,16 +30,20 @@ export function createLanternBank(
     const target = independent[index];
     if (!target) throw new Error(`Missing connected clue target for ${difficulty}.`);
     const targetNumber = target.id.slice(-3);
-    const trueStatement = target.correctState === "lit";
+    const describesTruth = index === 0;
+    const trueStatement = describesTruth
+      ? target.correctState === "lit"
+      : target.correctState === "dark";
     return {
       id: `lantern-${difficulty}-${String(index + 19).padStart(3, "0")}`,
       difficulty,
       category: "logic" as const,
       statementType: "connected" as const,
       relatedLanternId: target.id,
+      connectedTargetState: describesTruth ? ("lit" as const) : ("dark" as const),
       correctState: trueStatement ? ("lit" as const) : ("dark" as const),
-      statement: `Lantern ${targetNumber} has a true statement.`,
-      explanation: `Lantern ${targetNumber} is ${trueStatement ? "lit" : "dark"}, so its statement is ${trueStatement ? "true" : "false"}.`,
+      statement: `Lantern ${targetNumber}'s statement is ${describesTruth ? "true" : "false"}.`,
+      explanation: `This clue describes whether Lantern ${targetNumber}'s statement is ${describesTruth ? "true" : "false"}. That lantern's answer shows its truth value: Lit means true and Dark means false.`,
     };
   });
   return [...independent, ...connected];

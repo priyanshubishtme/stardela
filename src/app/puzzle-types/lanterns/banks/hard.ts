@@ -5,10 +5,10 @@ import type { Lantern } from "../puzzle";
 const hardFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   {
     category: "mathematics",
-    statement: "A regular hexagon has interior angles that sum to 720 degrees.",
+    statement: "A regular hexagon has interior angles that sum to 540 degrees.",
     statementType: "independent",
-    correctState: "lit",
-    explanation: "A six-sided polygon has angle sum (6 - 2) x 180 = 720 degrees.",
+    correctState: "dark",
+    explanation: "A six-sided polygon has angle sum (6 - 2) x 180 = 720 degrees, not 540.",
   },
   {
     category: "science",
@@ -33,11 +33,11 @@ const hardFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
   {
     category: "science",
-    statement: "One astronomical unit is about 150 million kilometres.",
+    statement: "One astronomical unit is about 100 million kilometres.",
     statementType: "independent",
-    correctState: "lit",
+    correctState: "dark",
     explanation:
-      "One astronomical unit is the mean Earth-Sun distance, about 149.6 million kilometres.",
+      "One astronomical unit is about 149.6 million kilometres, close to 150 million, not 100 million.",
   },
   {
     category: "history",
@@ -48,17 +48,18 @@ const hardFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
   {
     category: "mathematics",
-    statement: "The angles in a Euclidean triangle sum to 180 degrees.",
+    statement: "A 4 by 4 square grid contains 40 squares.",
     statementType: "independent",
-    correctState: "lit",
-    explanation: "In Euclidean geometry, triangle angles sum to 180 degrees.",
+    correctState: "dark",
+    explanation:
+      "Count by side length: 16 unit squares, 9 of size 2, 4 of size 3, and 1 of size 4. There are 30 squares, not 40.",
   },
   {
     category: "technology",
-    statement: "The binary number 1010 represents decimal 10.",
+    statement: "The binary number 1010 represents decimal 12.",
     statementType: "independent",
-    correctState: "lit",
-    explanation: "8 + 0 + 2 + 0 equals 10 in base ten.",
+    correctState: "dark",
+    explanation: "In base two, 1010 is 8 + 0 + 2 + 0, which equals decimal 10, not 12.",
   },
   {
     category: "science",
@@ -76,10 +77,10 @@ const hardFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
   {
     category: "mathematics",
-    statement: "The sum of the first 10 positive integers is 55.",
+    statement: "The sum of the first 10 positive integers is 50.",
     statementType: "independent",
-    correctState: "lit",
-    explanation: "Use n(n+1)/2: 10x11/2 = 55.",
+    correctState: "dark",
+    explanation: "Use n(n+1)/2: 10x11/2 = 55, so the sum is not 50.",
   },
   {
     category: "science",
@@ -132,6 +133,6 @@ const hardFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
 ];
 
-/** Tough clues use multi-step deductions and competition-style reasoning. */
+/** Create the Hard bank from its eighteen independent statements and two links. */
 
 export const hardLanterns: readonly Lantern[] = createLanternBank(hardFacts, "hard");

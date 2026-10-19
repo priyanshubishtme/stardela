@@ -28,6 +28,7 @@ export interface Lantern {
   readonly correctState: LanternState;
   readonly explanation: string;
   readonly relatedLanternId?: string;
+  readonly connectedTargetState?: LanternState;
 }
 
 export interface LanternPuzzle {
@@ -63,6 +64,31 @@ export function getPassingScore(
   return Math.ceil((selectionCount * passingPercentage) / 100);
 }
 
+/** Check one connected clue and its target. */
+function validateLanternLink(
+  lantern: Lantern,
+  lanterns: readonly Lantern[],
+  ids: ReadonlySet<string>,
+  errors: string[],
+) {
+  if (lantern.relatedLanternId && !ids.has(lantern.relatedLanternId)) {
+    errors.push(`Lantern ${lantern.id} references missing lantern ${lantern.relatedLanternId}.`);
+  }
+  const target = lanterns.find((item) => item.id === lantern.relatedLanternId);
+  if (lantern.statementType === "connected" && target?.statementType !== "independent") {
+    errors.push(`Connected lantern ${lantern.id} must reference an independent lantern.`);
+  }
+  if (lantern.statementType === "connected" && target && lantern.connectedTargetState) {
+    const expectedState = target.correctState === lantern.connectedTargetState ? "lit" : "dark";
+    if (lantern.correctState !== expectedState) {
+      errors.push(`Connected lantern ${lantern.id} has an answer that conflicts with its target.`);
+    }
+  }
+  if (lantern.statementType === "independent" && lantern.connectedTargetState !== undefined) {
+    errors.push(`Independent lantern ${lantern.id} must not define a connected target state.`);
+  }
+}
+
 /** Check IDs, references, and the expected bank size. */
 export function validateLanternBank(lanterns: readonly Lantern[]): {
   valid: boolean;
@@ -82,6 +108,9 @@ export function validateLanternBank(lanterns: readonly Lantern[]): {
     if (lantern.statementType === "connected" && lantern.relatedLanternId === undefined) {
       errors.push(`Connected lantern ${lantern.id} must reference another lantern.`);
     }
+    if (lantern.statementType === "connected" && lantern.connectedTargetState === undefined) {
+      errors.push(`Connected lantern ${lantern.id} must define the target state it describes.`);
+    }
     if (lantern.relatedLanternId === lantern.id) {
       errors.push(`Lantern ${lantern.id} must not reference itself.`);
     }
@@ -96,15 +125,7 @@ export function validateLanternBank(lanterns: readonly Lantern[]): {
   if (lanterns.filter((lantern) => lantern.statementType === "connected").length !== 2) {
     errors.push("Each bank must contain two connected lanterns.");
   }
-  for (const lantern of lanterns) {
-    if (lantern.relatedLanternId && !ids.has(lantern.relatedLanternId)) {
-      errors.push(`Lantern ${lantern.id} references missing lantern ${lantern.relatedLanternId}.`);
-    }
-    const target = lanterns.find((item) => item.id === lantern.relatedLanternId);
-    if (lantern.statementType === "connected" && target?.statementType !== "independent") {
-      errors.push(`Connected lantern ${lantern.id} must reference an independent lantern.`);
-    }
-  }
+  for (const lantern of lanterns) validateLanternLink(lantern, lanterns, ids, errors);
   return { valid: errors.length === 0, errors };
 }
 
@@ -136,7 +157,7 @@ const banks: Record<LanternDifficulty, readonly Lantern[]> = {
   tough: toughLanterns,
 };
 
-/** Select ten unique clues with one connected clue and its target. */
+/** Show all twenty lanterns while the player classifies ten of them. */
 export function createLanternPuzzle(
   difficulty: LanternDifficulty,
   random: () => number = Math.random,
@@ -144,27 +165,11 @@ export function createLanternPuzzle(
   const bank = banks[difficulty];
   const validation = validateLanternBank(bank);
   if (!validation.valid) throw new Error(validation.errors.join(" "));
-  const independent = bank.filter((lantern) => lantern.statementType === "independent");
-  const connected = bank.filter((lantern) => lantern.statementType === "connected");
-  const chosenConnection = connected[Math.floor(random() * connected.length)];
-  if (!chosenConnection?.relatedLanternId)
-    throw new Error(`No connected clue in ${difficulty} bank.`);
-  const target = independent.find((lantern) => lantern.id === chosenConnection.relatedLanternId);
-  if (!target) throw new Error(`Missing target for connected clue ${chosenConnection.id}.`);
-  const candidates = independent.filter((lantern) => lantern.id !== target.id);
-  const selected = [target];
-  while (selected.length < LANTERNS_PER_CHALLENGE - 1) {
-    const index = Math.floor(random() * candidates.length);
-    const [lantern] = candidates.splice(index, 1);
-    if (!lantern) throw new Error(`Could not select enough ${difficulty} clues.`);
-    selected.push(lantern);
-  }
-  selected.push(chosenConnection);
-  for (let index = selected.length - 1; index > 0; index -= 1) {
+  const lanterns = [...bank];
+  for (let index = lanterns.length - 1; index > 0; index -= 1) {
     const swap = Math.floor(random() * (index + 1));
-    [selected[index], selected[swap]] = [selected[swap]!, selected[index]!];
+    [lanterns[index], lanterns[swap]] = [lanterns[swap]!, lanterns[index]!];
   }
-  const lanterns = selected;
   return {
     id: `lanterns-${difficulty}-${Math.floor(random() * 1_000_000)}`,
     type: "lanterns",

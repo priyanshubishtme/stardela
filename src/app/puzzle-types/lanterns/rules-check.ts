@@ -5,7 +5,7 @@ export function evaluateLantern(lantern: Lantern, round: readonly Lantern[]): La
   if (lantern.statementType === "connected" && lantern.relatedLanternId) {
     const target = round.find((item) => item.id === lantern.relatedLanternId);
     if (!target) throw new Error(`Connected lantern ${lantern.id} has no target in this round.`);
-    return target.correctState;
+    return target.correctState === lantern.connectedTargetState ? "lit" : "dark";
   }
   return lantern.correctState;
 }

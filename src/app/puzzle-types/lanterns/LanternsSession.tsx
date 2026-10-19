@@ -1,69 +1,39 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { LanternDifficulty, LanternPuzzle, LanternState } from "./puzzle";
 import { Board } from "./Board";
+import { LanternsAnswerDialog } from "./LanternsAnswerDialog";
 import styles from "./LanternsSession.module.css";
 import { createLanternPuzzle } from "./puzzle";
 import { useLanternSession } from "./useLanternSession";
 
-/** Show the two choices and their true-or-false meanings. */
-function AnswerChoices({ onAnswer }: { onAnswer: (state: LanternState) => void }) {
+type Result = { correct: number; total: number; percentage: number; passed: boolean };
+
+/** Show one clear explanation for a classified lantern. */
+function ReviewItem({
+  lantern,
+  answer,
+}: {
+  lantern: LanternPuzzle["lanterns"][number];
+  answer: LanternState;
+}) {
+  const correct = answer === lantern.correctState;
   return (
-    <div className={styles.actions} aria-label="Choose the statement classification">
-      <button
-        type="button"
-        className={styles.litChoice}
-        aria-label="Lit - true"
-        onClick={() => onAnswer("lit")}
-      >
-        <span aria-hidden="true">{String.fromCodePoint(0x2726)}</span>
-        <strong>Lit</strong>
-        <small>True</small>
-      </button>
-      <button
-        type="button"
-        className={styles.darkChoice}
-        aria-label="Dark - false"
-        onClick={() => onAnswer("dark")}
-      >
-        <span aria-hidden="true">{String.fromCodePoint(0x25d0)}</span>
-        <strong>Dark</strong>
-        <small>False</small>
-      </button>
-    </div>
+    <li>
+      <strong>
+        {correct ? "Correct" : "Incorrect"} - {lantern.category.replaceAll("-", " ")}
+      </strong>
+      <p>{lantern.statement}</p>
+      <span>
+        Correct answer: <b>{lantern.correctState === "lit" ? "Lit - true" : "Dark - false"}</b>.
+        Your answer: <b>{answer === "lit" ? "Lit" : "Dark"}</b>.
+      </span>
+      <span>
+        <b>Why:</b> {lantern.explanation}
+      </span>
+    </li>
   );
 }
 
-/** Show one clue and the two answer choices. */
-function CluePanel({
-  statement,
-  category,
-  onAnswer,
-}: {
-  statement: string;
-  category: string;
-  onAnswer: (state: LanternState) => void;
-}) {
-  const heading = useRef<HTMLHeadingElement>(null);
-  useEffect(() => heading.current?.focus(), []);
-  useEffect(() => {
-    function handleShortcut(event: KeyboardEvent) {
-      const key = event.key.toLowerCase();
-      if (key === "l") onAnswer("lit");
-      if (key === "d") onAnswer("dark");
-    }
-    window.addEventListener("keydown", handleShortcut);
-    return () => window.removeEventListener("keydown", handleShortcut);
-  }, [onAnswer]);
-  return (
-    <div className={styles.clue} aria-labelledby="lantern-clue-title">
-      <p className={styles.category}>{category.replaceAll("-", " ")}</p>
-      <h2 id="lantern-clue-title" ref={heading} tabIndex={-1}>
-        {statement}
-      </h2>
-      <AnswerChoices onAnswer={onAnswer} />
-    </div>
-  );
-}
 /** Reveal scores and explanations when all answers are locked. */
 function ResultsPanel({
   puzzle,
@@ -72,54 +42,77 @@ function ResultsPanel({
 }: {
   puzzle: LanternPuzzle;
   answers: Readonly<Record<string, LanternState>>;
-  result: { correct: number; total: number; percentage: number; passed: boolean };
+  result: Result;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     heading.current?.focus();
   }, []);
+  const headingText =
+    result.correct === 10
+      ? "Perfect score"
+      : result.passed
+        ? "Challenge complete"
+        : "Challenge not passed";
   return (
     <section className={styles.result} aria-live="polite">
       <h2 ref={heading} tabIndex={-1}>
-        {result.correct === 10
-          ? "Perfect score"
-          : result.passed
-            ? "Challenge complete"
-            : "Challenge not passed"}
+        {headingText}
       </h2>
       <p>
         {result.correct} correct, {result.total - result.correct} incorrect - {result.percentage}%
       </p>
       <p>{result.passed ? "You passed." : "You need 7 correct answers to pass."}</p>
       <ol className={styles.review}>
-        {puzzle.lanterns.map((lantern) => {
-          const correct = answers[lantern.id] === lantern.correctState;
-          return (
-            <li key={lantern.id}>
-              <strong>
-                {lantern.id} - {lantern.correctState === "lit" ? "Lit" : "Dark"} -{" "}
-                {lantern.category.replaceAll("-", " ")}
-              </strong>{" "}
-              - {lantern.statement}
-              <br />
-              <span>
-                {correct ? "Correct." : `Your answer: ${answers[lantern.id]}.`}{" "}
-                {lantern.explanation}
-              </span>
-            </li>
-          );
-        })}
+        {puzzle.lanterns
+          .filter((lantern) => answers[lantern.id])
+          .map((lantern) => (
+            <ReviewItem key={lantern.id} lantern={lantern} answer={answers[lantern.id]!} />
+          ))}
       </ol>
     </section>
   );
 }
 
-/** Explain the answer choices and the locked-answer rule. */
+/** Celebrate or explain the result before the detailed review. */
+function ResultDialog({ result, onReview }: { result: Result; onReview: () => void }) {
+  return (
+    <div className={styles.resultBackdrop}>
+      <dialog
+        open
+        className={`${styles.resultDialog} ${result.passed ? styles.resultWin : styles.resultLoss}`}
+        aria-labelledby="round-result-title"
+      >
+        <span className={styles.resultMark} aria-hidden="true">
+          {result.passed ? "*" : "o"}
+        </span>
+        <p>{result.passed ? "ROUND COMPLETE" : "ROUND ENDED"}</p>
+        <h2 id="round-result-title">
+          {result.passed ? "You passed the challenge" : "Challenge not passed"}
+        </h2>
+        <strong>
+          {result.correct} / {result.total}
+        </strong>
+        <span>
+          {result.percentage}% accuracy -{" "}
+          {result.passed
+            ? "Seven correct answers are needed to pass."
+            : "Review the answers, then try again."}
+        </span>
+        <button type="button" onClick={onReview}>
+          View explanations
+        </button>
+      </dialog>
+    </div>
+  );
+}
+
+/** Explain the direct answer flow. */
 function Instructions() {
   return (
     <div className={styles.instructions}>
       <strong>How to play</strong>
-      <span>Inspect one lantern, then choose Lit for true or Dark for false.</span>
+      <span>Open a lantern and choose Lit for true or Dark for false.</span>
       <span>Your choice locks. Results appear after all ten lanterns.</span>
     </div>
   );
@@ -161,9 +154,11 @@ function RoundEnd({
 }: {
   puzzle: LanternPuzzle;
   answers: Readonly<Record<string, LanternState>>;
-  result: NonNullable<ReturnType<typeof useLanternSession>["result"]>;
+  result: Result;
   onRestart: () => void;
 }) {
+  const [showResult, setShowResult] = useState(true);
+  if (showResult) return <ResultDialog result={result} onReview={() => setShowResult(false)} />;
   return (
     <>
       <ResultsPanel puzzle={puzzle} answers={answers} result={result} />
@@ -174,14 +169,15 @@ function RoundEnd({
   );
 }
 
-/** Show a clue only while the player is answering it. */
+/** Show the statement and both answer choices in one dialog. */
 function ActiveClue({ session }: { session: ReturnType<typeof useLanternSession> }) {
   if (!session.selected || session.complete) return null;
   return (
-    <CluePanel
+    <LanternsAnswerDialog
       statement={session.selected.statement}
       category={session.selected.category}
       onAnswer={session.answer}
+      onClose={session.closeStatement}
     />
   );
 }
@@ -203,7 +199,7 @@ function RoundProgress({ classified, total }: { classified: number; total: numbe
   );
 }
 
-/** Show the board, active clue, progress, and final round summary. */
+/** Show the board, direct answer dialog, progress, and final round summary. */
 function GameRound({
   difficulty,
   puzzle,
@@ -228,7 +224,7 @@ function GameRound({
       />
       <RoundProgress classified={classified} total={puzzle.selectionCount} />
       <Board
-        lanterns={puzzle.lanterns}
+        lanterns={session.displayedLanterns}
         answers={session.answers}
         selectedId={session.selected?.id ?? null}
         onInspect={session.inspect}

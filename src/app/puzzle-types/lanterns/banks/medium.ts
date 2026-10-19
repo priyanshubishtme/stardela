@@ -75,10 +75,10 @@ const mediumFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
   {
     category: "mathematics",
-    statement: "The next number in 2, 6, 12, 20 is 30.",
+    statement: "The next number in 2, 6, 12, 20 is 29 under the pattern n times (n + 1).",
     statementType: "independent",
-    correctState: "lit",
-    explanation: "The terms are 1x2, 2x3, 3x4, 4x5, so the next is 5x6.",
+    correctState: "dark",
+    explanation: "The terms are 1x2, 2x3, 3x4, and 4x5. The next is 5x6, which equals 30, not 29.",
   },
   {
     category: "science",
@@ -96,10 +96,10 @@ const mediumFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
   {
     category: "technology",
-    statement: "An IPv4 address contains 32 bits.",
+    statement: "An IPv4 address contains 24 bits.",
     statementType: "independent",
-    correctState: "lit",
-    explanation: "IPv4 addresses use four 8-bit octets, for 32 bits total.",
+    correctState: "dark",
+    explanation: "IPv4 has four 8-bit octets, so its total length is 32 bits, not 24.",
   },
   {
     category: "history",
@@ -110,10 +110,10 @@ const mediumFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
   {
     category: "mathematics",
-    statement: "The median of 3, 8, 10, 15, 20 is 10.",
+    statement: "The median of 3, 8, 10, 15, 20 is 11.",
     statementType: "independent",
-    correctState: "lit",
-    explanation: "The middle value in this ordered set is 10.",
+    correctState: "dark",
+    explanation: "There are five ordered values, so the median is the middle value: 10, not 11.",
   },
   {
     category: "science",
@@ -131,6 +131,6 @@ const mediumFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
   },
 ];
 
-/** Hard clues use multi-step maths and advanced science facts. */
+/** Create the Medium bank from its eighteen independent statements and two links. */
 
 export const mediumLanterns: readonly Lantern[] = createLanternBank(mediumFacts, "medium");

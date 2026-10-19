@@ -129,22 +129,8 @@ const easyFacts: readonly Omit<Lantern, "id" | "difficulty">[] = [
     correctState: "dark",
     explanation: "The Sun is a star, not a planet.",
   },
-  {
-    category: "logic",
-    statement: "If all squares are rectangles, then every square is a rectangle.",
-    statementType: "independent",
-    correctState: "lit",
-    explanation: "This repeats the stated condition, so it is true.",
-  },
-  {
-    category: "mythological",
-    statement: "In Norse mythology, Thor carries a hammer called Mjolnir.",
-    statementType: "independent",
-    correctState: "lit",
-    explanation: "Mjolnir is Thor's hammer in Norse mythology.",
-  },
 ];
 
-/** The initial verified set contains twenty easy statements. */
+/** Create the Easy bank from its eighteen independent statements and two links. */
 
 export const easyLanterns: readonly Lantern[] = createLanternBank(easyFacts, "easy");

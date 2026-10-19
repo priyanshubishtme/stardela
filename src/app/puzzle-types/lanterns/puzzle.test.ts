@@ -18,10 +18,15 @@ describe("Lanterns puzzle data", () => {
       expect(bank).toHaveLength(20);
       expect(validateLanternBank(bank)).toEqual({ valid: true, errors: [] });
     }
+    for (const bank of [easyLanterns, mediumLanterns, hardLanterns, toughLanterns]) {
+      expect(new Set(bank.map((item) => item.statement)).size).toBe(20);
+      expect(bank.filter((item) => item.statementType === "independent")).toHaveLength(18);
+      expect(bank.every((item) => item.explanation.trim().length > 0)).toBe(true);
+    }
   });
 
-  it("creates ten lantern challenges and calculates the pass score", () => {
-    expect(createLanternPuzzle("easy").lanterns).toHaveLength(10);
+  it("shows twenty lantern choices and calculates the ten-answer pass score", () => {
+    expect(createLanternPuzzle("easy").lanterns).toHaveLength(20);
     expect(createLanternPuzzle("medium").difficulty).toBe("medium");
     expect(createLanternPuzzle("medium").lanterns[0]?.statement).not.toBe(
       createLanternPuzzle("easy").lanterns[0]?.statement,
@@ -30,14 +35,13 @@ describe("Lanterns puzzle data", () => {
     expect(createLanternPuzzle("tough").difficulty).toBe("tough");
     for (const difficulty of ["easy", "medium", "hard", "tough"] as const) {
       const round = createLanternPuzzle(difficulty, () => 0);
-      expect(round.lanterns).toHaveLength(10);
-      expect(new Set(round.lanterns.map((item) => item.id)).size).toBe(10);
-      expect(round.lanterns.filter((item) => item.statementType === "connected")).toHaveLength(1);
-      const linked = round.lanterns.find((item) => item.statementType === "connected");
-      expect(round.lanterns.some((item) => item.id === linked?.relatedLanternId)).toBe(true);
+      expect(round.lanterns).toHaveLength(20);
+      expect(new Set(round.lanterns.map((item) => item.id)).size).toBe(20);
+      expect(round.lanterns.filter((item) => item.statementType === "connected")).toHaveLength(2);
+      expect(round.selectionCount).toBe(10);
       const alternate = createLanternPuzzle(difficulty, () => 0.99);
-      expect(alternate.lanterns.find((item) => item.statementType === "connected")?.id).not.toBe(
-        linked?.id,
+      expect(alternate.lanterns.map((item) => item.id)).not.toEqual(
+        round.lanterns.map((item) => item.id),
       );
     }
     expect(getPassingScore(10)).toBe(7);

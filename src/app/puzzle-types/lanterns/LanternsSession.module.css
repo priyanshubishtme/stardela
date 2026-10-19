@@ -6,7 +6,8 @@
 }
 .instructions,
 .clue,
-.result {
+.result,
+.pendingAnswer {
   color: #f5f1e8;
 }
 .instructions {
@@ -77,7 +78,10 @@
 }
 .clue {
   position: relative;
-  padding: clamp(1rem, 3vw, 1.6rem);
+  width: min(100%, 610px);
+  max-height: min(88vh, 760px);
+  margin: auto;
+  padding: clamp(1.25rem, 4vw, 2.1rem);
   overflow: hidden;
   border: 1px solid #e2c18435;
   border-radius: 1.15rem;
@@ -85,6 +89,62 @@
   box-shadow:
     0 18px 42px #05091666,
     inset 0 1px #fff1;
+}
+.dialogBackdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: #080c17bd;
+  backdrop-filter: blur(8px);
+}
+.dialogBackdrop .clue {
+  position: relative;
+  inset: auto;
+  margin: 0;
+  overflow-y: auto;
+  color: #f5f1e8;
+}
+.dialogTopline {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.dialogTopline > span {
+  margin-left: auto;
+  color: #9ea7ba;
+  font-size: 0.73rem;
+}
+.closeClue {
+  padding: 0.4rem 0.65rem;
+  border: 1px solid #d8d8e02d;
+  border-radius: 999px;
+  background: #ffffff09;
+  color: #d6d8e0;
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.dialogBackdrop .closeClue {
+  min-height: 34px;
+  padding: 0.35rem 0.65rem;
+  border-color: #d8d8e02d;
+  background: #ffffff09;
+  color: #d6d8e0;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.closeClue:hover {
+  background: #ffffff16;
+}
+.dialogInstruction {
+  position: relative;
+  margin: 2rem 0 0.5rem;
+  color: #b9bfcc;
+  font-size: 0.88rem;
 }
 .clue::before {
   position: absolute;
@@ -114,6 +174,88 @@
   color: #fff7e7;
   font-size: clamp(1.1rem, 2.5vw, 1.45rem);
   line-height: 1.45;
+}
+.clue h2 {
+  margin-top: 0.55rem;
+  margin-bottom: 1.65rem;
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+}
+.continue {
+  min-height: 48px;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid #e7c47e;
+  border-radius: 999px;
+  background: #e9ba63;
+  color: #211b2b;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+.dialogBackdrop .continue {
+  min-height: 48px;
+  padding: 0.7rem 1.15rem;
+  border-color: #e7c47e;
+  background: #e9ba63;
+  color: #211b2b;
+  font-weight: 750;
+}
+.continue:hover {
+  background: #ffdc8c;
+}
+.answerPrompt {
+  margin: 0 0 0.8rem;
+  color: #d9dce4;
+  font-weight: 650;
+}
+.reviewStatement {
+  display: block;
+  margin-top: 1rem;
+  padding: 0.4rem 0;
+  border: 0;
+  background: transparent;
+  color: #c6cada;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.pendingAnswer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid #e2c18445;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #151b2bf0, #1c2034e8);
+  box-shadow:
+    0 16px 40px #05091655,
+    inset 0 1px #ffffff0d;
+}
+.pendingAnswer h2 {
+  margin: 0.35rem 0;
+  color: #fff4dc;
+  font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+}
+.pendingAnswer p:not(.category) {
+  margin: 0;
+  color: #bfc5d2;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.pendingAnswer .category {
+  font-size: 0.7rem;
+}
+.pendingAnswer .reviewStatement {
+  grid-column: 1 / -1;
+  justify-self: start;
+  margin: 0;
+}
+.closeClue:focus-visible,
+.continue:focus-visible,
+.reviewStatement:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
 }
 .actions {
   position: relative;
@@ -168,9 +310,19 @@
   background: linear-gradient(135deg, #ffe39d, #e8ad56);
   box-shadow: 0 6px 20px #e5a74426;
 }
+.dialogBackdrop .actions .litChoice {
+  background: linear-gradient(135deg, #ffe39d, #e8ad56);
+  color: #241b2b;
+}
 .darkChoice {
-  background: linear-gradient(135deg, #d7d7e3, #aaaec5);
-  border-color: #dce0f388 !important;
+  border-color: #666b75 !important;
+  background: #111318;
+  color: #f7f2e6 !important;
+  box-shadow: 0 6px 20px #00000055;
+}
+.dialogBackdrop .actions .darkChoice {
+  background: #111318;
+  color: #f7f2e6;
 }
 .result {
   padding: clamp(1rem, 3vw, 1.6rem);
@@ -201,8 +353,110 @@
 .review li strong {
   color: #f5dfb0;
 }
+.review li p {
+  margin: 0.35rem 0;
+  color: #f1f2f6;
+}
 .review span {
+  display: block;
   color: #bdc4d2;
+}
+.review span + span {
+  margin-top: 0.35rem;
+}
+.review b {
+  color: #f2d69f;
+}
+.resultBackdrop {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: #070b16c9;
+  backdrop-filter: blur(10px);
+}
+.resultDialog {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 460px);
+  padding: clamp(1.6rem, 5vw, 2.6rem);
+  border: 1px solid #ffffff22;
+  border-radius: 1.35rem;
+  background: linear-gradient(145deg, #1b2238, #101524);
+  color: #eff1f6;
+  text-align: center;
+  box-shadow: 0 28px 90px #000a;
+  animation: resultEnter 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.resultDialog p {
+  margin: 0.35rem 0;
+  color: #c7cad7;
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+}
+.resultDialog h2 {
+  margin: 0.25rem 0 0.7rem;
+  font-size: clamp(1.55rem, 5vw, 2.25rem);
+  letter-spacing: -0.045em;
+}
+.resultDialog > strong {
+  margin-bottom: 0.35rem;
+  font-size: 2.7rem;
+  font-variant-numeric: tabular-nums;
+}
+.resultDialog > span:not(.resultMark) {
+  color: #c5cad6;
+  line-height: 1.5;
+}
+.resultDialog button {
+  margin-top: 1.5rem;
+}
+.resultMark {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 0.45rem;
+  border-radius: 50%;
+  font-size: 2rem;
+}
+.resultWin .resultMark {
+  background: #edbd5a;
+  color: #1b1b28;
+  box-shadow: 0 0 36px #f1bd5d80;
+  animation: winPulse 1s ease-in-out infinite alternate;
+}
+.resultWin h2,
+.resultWin > strong {
+  color: #ffe0a0;
+}
+.resultLoss .resultMark {
+  border: 1px solid #9da6ba;
+  background: #171b27;
+  color: #d2d7e4;
+}
+.resultLoss h2,
+.resultLoss > strong {
+  color: #e0e3eb;
+}
+@keyframes resultEnter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes winPulse {
+  to {
+    box-shadow: 0 0 54px #f1bd5da3;
+    transform: scale(1.08);
+  }
 }
 @media (max-width: 560px) {
   .instructions {
@@ -219,8 +473,27 @@
     min-width: 0;
     padding: 0.6rem;
   }
+  .dialogBackdrop {
+    padding: 0.65rem;
+  }
+  .clue {
+    width: 100%;
+  }
+  .pendingAnswer {
+    grid-template-columns: 1fr;
+  }
+  .pendingAnswer .actions {
+    grid-template-columns: 1fr 1fr;
+  }
+  .dialogInstruction {
+    margin-top: 1.4rem;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
+  .resultDialog,
+  .resultWin .resultMark {
+    animation: none;
+  }
   .actions button {
     transition: none;
   }

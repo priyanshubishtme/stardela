@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import type { LanternDifficulty } from "../puzzle-types/lanterns/puzzle";
+import { LanternIllustration } from "../puzzle-types/lanterns/LanternIllustration";
 import { LanternsSession } from "../puzzle-types/lanterns/LanternsSession";
 import styles from "./LanternsPage.module.css";
+import { LanternsRecord } from "./LanternsRecord";
+import { LanternsGuide } from "./LanternsGuide";
 
 type Screen = "welcome" | "rules" | "choose" | "game";
 const STATS_KEY = "stardela_lanterns_stats_v1";
@@ -47,11 +50,19 @@ function readStats(): LanternStats {
   }
   return emptyStats;
 }
-const modes: { id: LanternDifficulty; summary: string }[] = [
-  { id: "easy", summary: "Clear facts and simple number clues." },
-  { id: "medium", summary: "Connect facts and use several reasoning steps." },
-  { id: "hard", summary: "Use advanced maths and careful analysis." },
-  { id: "tough", summary: "Solve competition style logic and maths clues." },
+const modes: { id: LanternDifficulty; summary: string; detail: string }[] = [
+  {
+    id: "easy",
+    summary: "Easy",
+    detail: "Build confidence with clear facts and direct number clues.",
+  },
+  {
+    id: "medium",
+    summary: "Medium",
+    detail: "Connect related facts across a few reasoning steps.",
+  },
+  { id: "hard", summary: "Hard", detail: "Use multi-step maths and careful analysis." },
+  { id: "tough", summary: "Tough", detail: "Solve layered logic and advanced maths clues." },
 ];
 
 /** Explain the game and link to its instructions or difficulty menu. */
@@ -66,53 +77,31 @@ function Welcome({
 }) {
   return (
     <section className={styles.hero}>
-      <p className={styles.eyebrow}>A Stardela logic game</p>
+      <LanternIllustration id="welcome" className={styles.landingLantern} />
+      <p className={styles.eyebrow}>
+        STARDELA <span aria-hidden="true">/</span> LOGIC PUZZLE
+      </p>
       <h1>Lanterns</h1>
-      <p>
-        Read the statements hidden in a quiet night sky. Decide which are true and which are false.
+      <p className={styles.intro}>
+        Read each statement and mark it true or false. Your score appears after the final lantern.
       </p>
-      <p className={styles.rule}>10 lanterns per round / 7 correct to pass</p>
-      <p className={styles.record}>
-        {stats.played} played / {stats.wins} passed / {stats.losses} not passed / Accuracy:{" "}
-        {stats.total ? Math.round((stats.correct / stats.total) * 100) : 0}%
-        <br />
-        Best scores (Easy / Medium / Hard / Tough): {stats.best.easy} / {stats.best.medium} /{" "}
-        {stats.best.hard} / {stats.best.tough}
-      </p>
+      <div className={styles.challengeMeta} aria-label="Round rules">
+        <span>
+          <strong>10</strong> clues per round
+        </span>
+        <span>
+          <strong>7</strong> correct to pass
+        </span>
+      </div>
+      <LanternsRecord stats={stats} />
       <div className={styles.buttons}>
         <button type="button" onClick={onPlay}>
-          Play
+          Start a round
         </button>
         <button type="button" className={styles.secondary} onClick={onRules}>
           How to play
         </button>
       </div>
-    </section>
-  );
-}
-
-/** Show the answer rules before the player starts a round. */
-function Rules({ onChoose }: { onChoose: () => void }) {
-  return (
-    <section className={styles.panel}>
-      <h1>How to play</h1>
-      <ol>
-        <li>Choose a difficulty. The game selects 10 lanterns from its 20 clue bank.</li>
-        <li>Open one lantern to read its statement. Only one statement can be open at a time.</li>
-        <li>
-          Choose <strong>Lit</strong> if its statement is true or <strong>Dark</strong> if it is
-          false.
-        </li>
-        <li>Your answer locks. You cannot change it or open that lantern again.</li>
-        <li>The game hides correctness until you classify all 10 lanterns.</li>
-        <li>
-          Score at least 7 correct answers to pass. One clue links to another lantern&apos;s
-          statement.
-        </li>
-      </ol>
-      <button type="button" onClick={onChoose}>
-        Choose a difficulty
-      </button>
     </section>
   );
 }
@@ -130,11 +119,17 @@ function DifficultyMenu({
   onRules: () => void;
 }) {
   return (
-    <section className={styles.panel}>
-      <h1>Choose your challenge</h1>
-      <p>Each round draws 10 unique lanterns from a bank of 20.</p>
+    <section className={`${styles.panel} ${styles.difficultyPanel}`}>
+      <div className={styles.menuHeading}>
+        <p className={styles.menuEyebrow}>SET YOUR PACE</p>
+        <h1>Choose your challenge</h1>
+        <p className={styles.menuIntro}>
+          Choose a level to set the clue difficulty. Each round selects 10 unique lanterns from a
+          bank of 20.
+        </p>
+      </div>
       <div className={styles.modes}>
-        {modes.map((mode) => (
+        {modes.map((mode, index) => (
           <button
             key={mode.id}
             type="button"
@@ -142,17 +137,20 @@ function DifficultyMenu({
             className={difficulty === mode.id ? styles.modeSelected : styles.mode}
             onClick={() => onSelect(mode.id)}
           >
-            <strong>{mode.id.toUpperCase()}</strong>
-            <span>{mode.summary}</span>
+            <span className={styles.modeNumber}>0{index + 1} / LEVEL</span>
+            <strong>{mode.summary}</strong>
+            <span className={styles.modeDetail}>{mode.detail}</span>
           </button>
         ))}
       </div>
-      <button type="button" onClick={onStart}>
-        Start {difficulty} challenge
-      </button>
-      <button type="button" className={styles.secondary} onClick={onRules}>
-        How to play
-      </button>
+      <div className={styles.menuActions}>
+        <button type="button" onClick={onStart}>
+          Start {difficulty} challenge
+        </button>
+        <button type="button" className={styles.secondary} onClick={onRules}>
+          How to play
+        </button>
+      </div>
     </section>
   );
 }
@@ -238,7 +236,7 @@ function FlowScreen({
     <>
       <title>Lanterns | Stardela</title>
       {screen === "welcome" && <Welcome stats={stats} onPlay={onChoose} onRules={onRules} />}
-      {screen === "rules" && <Rules onChoose={onChoose} />}
+      {screen === "rules" && <LanternsGuide onChoose={onChoose} />}
       {screen === "choose" && (
         <DifficultyMenu
           difficulty={difficulty}
@@ -268,12 +266,7 @@ export function LanternsPage() {
   const { stats, recordResult } = useLanternStats(difficulty);
   return (
     <div className={styles.page}>
-      <div className={styles.sky} aria-hidden="true">
-        <span>*</span>
-        <span>+</span>
-        <span>*</span>
-        <span>+</span>
-      </div>
+      <div className={styles.sky} aria-hidden="true"></div>
       <Link className={styles.back} to="/">
         Back to puzzle collection
       </Link>
